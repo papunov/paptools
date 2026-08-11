@@ -3,3 +3,6 @@
 Thumbs.db
 *.tmp
 *.log
+
+# Ignore local secret configurations
+mcp_config.json
