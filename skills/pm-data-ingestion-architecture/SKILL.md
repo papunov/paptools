@@ -34,6 +34,21 @@ PersonalManager-Data-Ingestion/
 - Записва резултата (`Success` / `Failed`) в колекция `JobStatuses` в MongoDB.
 - При възникване на критична грешка изпраща имейл известие чрез `core.utils.send_email`.
 
+## 🍃 MongoDB Atlas Връзка (Cloud DB)
+
+За да свържете фоновата Python услуга с **MongoDB Atlas**:
+
+1. Добавете `dnspython` към `requirements.txt` (нужен за `mongodb+srv://` схемата):
+   ```text
+   pymongo>=4.0
+   dnspython>=2.0
+   ```
+2. Задайте `MONGO_URI` в `.env`:
+   ```env
+   MONGO_URI=mongodb+srv://username:password@cluster.mongodb.net/?retryWrites=true&w=majority
+   DB_NAME=PersonalManager
+   ```
+
 ## CRON Настройки в `.env`
 
 | Задача | ENV Променлива | По подразбиране | Описание |
