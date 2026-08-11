@@ -1,7 +1,7 @@
 ---
 name: pm-mongodb-database
 description: >-
-  Пълно ръководство и пълна схема на production MongoDB Atlas базата данни (`PersonalManager`): 51 колекции, полета, BSON типове, Atlas конекции, C# & PyMongo CRUD операции и индекси.
+  Пълно ръководство и пълна схема на production MongoDB Atlas базата данни (`PersonalManager`): 51 колекции, полета, BSON типове, Atlas конекции, C# & PyMongo CRUD операции, MongoDB Atlas MCP инструменти и индекси.
 ---
 
 # PersonalManager MongoDB Production Database Guide
@@ -143,3 +143,60 @@ db.RecurringExpenses.createIndex({ "AutomaticPayment": 1, "DayOfMonth": 1 });
 db.CarDrivingStats.createIndex({ "UserId": 1, "CarId": 1, "Date": -1 });
 db.Logs.createIndex({ "Date": -1 });
 ```
+
+---
+
+## 5. Интеграция и Заявки през MongoDB Atlas MCP Server (`mongodb-mcp-server`)
+
+В **Antigravity AI** е конфигуриран официалният **MongoDB Atlas MCP Server**, който предоставя 31 директни MCP инструмента за инспекция, търсене, агрегиране и манипулиране на данни в production базата:
+
+- **Идентификатор на връзката (`connectionId`)**: `"preconfigured"`
+
+### Основни MCP Инструменти:
+1. **`find`**: Извличане на документи по филтър
+   ```json
+   {
+     "connectionId": "preconfigured",
+     "database": "PersonalManager",
+     "collection": "Transactions",
+     "filter": { "Expense": true },
+     "limit": 10
+   }
+   ```
+2. **`count`**: Преброяване на документи
+   ```json
+   {
+     "connectionId": "preconfigured",
+     "database": "PersonalManager",
+     "collection": "CarDrivingStats",
+     "query": {}
+   }
+   ```
+3. **`aggregate`**: Изпълнение на агрегиращ пайплайн
+   ```json
+   {
+     "connectionId": "preconfigured",
+     "database": "PersonalManager",
+     "collection": "Transactions",
+     "pipeline": [
+       { "$match": { "Expense": true } },
+       { "$group": { "_id": "$CategoryName", "totalSum": { "$sum": "$Sum" } } },
+       { "$sort": { "totalSum": -1 } }
+     ]
+   }
+   ```
+4. **`collection-schema`**: Анализ на схемата и типовете в колекция
+   ```json
+   {
+     "connectionId": "preconfigured",
+     "database": "PersonalManager",
+     "collection": "Stocks"
+   }
+   ```
+5. **`list-collections`**: Списък на всички колекции в базата
+   ```json
+   {
+     "connectionId": "preconfigured",
+     "database": "PersonalManager"
+   }
+   ```

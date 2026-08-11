@@ -117,3 +117,26 @@ var drivingStats = await db.GetCollection<BsonDocument>("CarDrivingStats")
 double totalKm = drivingStats.Sum(x => x["DistanceKm"].AsDouble);
 int totalTrips = drivingStats.Count;
 ```
+
+---
+
+## 3. Заявки през MongoDB Atlas MCP Server (`mongodb-mcp-server`)
+
+### Вземане на средния разход на гориво по автомобил през MCP `aggregate`:
+```json
+{
+  "connectionId": "preconfigured",
+  "database": "PersonalManager",
+  "collection": "FuelConsumptionAnalysis",
+  "pipeline": [
+    {
+      "$group": {
+        "_id": "$CarId",
+        "avgConsumptionL100km": { "$avg": "$AvgConsumption" },
+        "totalDistanceKm": { "$sum": "$DistanceKm" },
+        "totalLiters": { "$sum": "$Liters" }
+      }
+    }
+  ]
+}
+```
