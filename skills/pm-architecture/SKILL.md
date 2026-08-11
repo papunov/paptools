@@ -29,6 +29,52 @@ PersonalManager/
 
 ---
 
+## 🔒 Защитена Конфигурация за Локална и PROD Среда (Best Practices)
+
+Никога не записвайте тайни (пароли и connection strings за PROD) в Git репозиторията (`appsettings.json` или `.env`).
+
+### 1. За .NET (`Web.ManagerV2` & `Web.API`)
+
+.NET използва конфигурационен йерархичен модел:
+- **`appsettings.json`** (Локални стойности по подразбиране, публично в Git):
+  ```json
+  {
+    "ConnectionStrings": {
+      "MongoDB": "mongodb://127.0.0.1:27017"
+    }
+  }
+  ```
+- **Локална разработка (`dotnet user-secrets`)**:
+  Съхранява пароли локално извън сорс кода:
+  ```bash
+  cd Web.ManagerV2
+  dotnet user-secrets init
+  dotnet user-secrets set "ConnectionStrings:MongoDB" "mongodb+srv://dev_user:dev_pass@cluster-dev.mongodb.net/PersonalManager"
+  ```
+- **PROD Среда (Azure / Linux / Docker)**:
+  В PROD среда .NET автоматично презаписва `appsettings.json` през **Environment Variables**:
+  - Име на променливата: `ConnectionStrings__MongoDB` (обърнете внимание на двойния долна черта `__`).
+  - Стойност: `mongodb+srv://prod_user:strong_password@cluster-prod.mongodb.net/PersonalManager?retryWrites=true&w=majority`
+
+### 2. За Python (`PersonalManager-Data-Ingestion`)
+
+- **`.env.example`** (Включен в Git, без реални пароли):
+  ```env
+  MONGO_URI=mongodb://localhost:27017/
+  DB_NAME=PersonalManager
+  ```
+- **Локална среда (`.env`)**: Файлът `.env` се добавя в `.gitignore` и съдържа локалните ключове.
+- **PROD Среда (Docker / Systemd)**:
+  Подавайте променливите от секретен масив или през `docker run`:
+  ```bash
+  docker run -d --name data-ingestion \
+    -e MONGO_URI="mongodb+srv://prod_user:strong_password@cluster-prod.mongodb.net/?retryWrites=true&w=majority" \
+    -e DB_NAME="PersonalManager" \
+    personalmanager-data-ingestion
+  ```
+
+---
+
 ## 🌐 Свързване към MongoDB Atlas (Cloud Database)
 
 Системата поддържа свързване както към локален MongoDB сървър, така и към **MongoDB Atlas** в облака чрез `mongodb+srv://` протокола.
@@ -39,27 +85,9 @@ mongodb+srv://<username>:<password>@<cluster-name>.mongodb.net/<dbname>?retryWri
 ```
 *Забележка: Ако паролата съдържа специални символи като `@`, `:`, `/`, `#`, `%`, те трябва да бъдат URL-кодирани (напр. `@` става `%40`).*
 
-### 2. Конфигурация в .NET (`Web.ManagerV2/appsettings.json`)
-```json
-{
-  "ConnectionStrings": {
-    "MongoDB": "mongodb+srv://user:password@cluster.mongodb.net/PersonalManager?retryWrites=true&w=majority"
-  }
-}
-```
-*Алтернативно през Environment Variable:*
-`ConnectionStrings__MongoDB="mongodb+srv://..."`
-
-### 3. Конфигурация в Python (`PersonalManager-Data-Ingestion / .env`)
-Уверете се, че пакетите `pymongo` и `dnspython` са инсталирани в Python средата за поддръжка на SRV записите.
-```env
-MONGO_URI=mongodb+srv://user:password@cluster.mongodb.net/?retryWrites=true&w=majority
-DB_NAME=PersonalManager
-```
-
-### 4. Изисквания за Сигурност в MongoDB Atlas
-- **Network Access (IP Whitelist)**: Уверете се, че IP адресът на сървъра/компютъра е добавен в IP Access List на MongoDB Atlas (или `0.0.0.0/0` за достъп отвсякъде при защитени потребителски данни).
-- **Database User**: Потребителят трябва да има права `readWrite` за базата `PersonalManager`.
+### 2. Изисквания за Сигурност в MongoDB Atlas
+- **Ограничен потребител (Database User)**: Създайте отделен потребител за PROD с минимални права (`readWrite` само за базата `PersonalManager`).
+- **IP Access List**: Добавете точното IP на PROD сървъра. За контейнери в Azure/AWS използвайте VPC Peering или Private Endpoint.
 
 ---
 
