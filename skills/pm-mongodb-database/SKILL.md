@@ -75,7 +75,7 @@ description: >-
 
 - **MongoDB Atlas (Production Cloud)**:
   ```text
-  mongodb+srv://papunov:PAPUNOV87papunov87@papcl01-wqwkg.azure.mongodb.net/PersonalManager?retryWrites=true&w=majority
+  mongodb+srv://<username>:<password>@papcl01-wqwkg.azure.mongodb.net/PersonalManager?retryWrites=true&w=majority
   ```
 - **Локален MongoDB**:
   ```text
@@ -91,7 +91,7 @@ description: >-
 using MongoDB.Bson;
 using MongoDB.Driver;
 
-var client = new MongoClient("mongodb+srv://papunov:PAPUNOV87papunov87@papcl01-wqwkg.azure.mongodb.net/PersonalManager?retryWrites=true&w=majority");
+var client = new MongoClient("mongodb+srv://<username>:<password>@papcl01-wqwkg.azure.mongodb.net/PersonalManager?retryWrites=true&w=majority");
 var db = client.GetDatabase("PersonalManager");
 
 // Заявка към Transactions
@@ -106,7 +106,7 @@ import pymongo
 from bson import ObjectId
 from bson.decimal128 import Decimal128
 
-uri = "mongodb+srv://papunov:PAPUNOV87papunov87@papcl01-wqwkg.azure.mongodb.net/PersonalManager?retryWrites=true&w=majority"
+uri = "mongodb+srv://<username>:<password>@papcl01-wqwkg.azure.mongodb.net/PersonalManager?retryWrites=true&w=majority"
 client = pymongo.MongoClient(uri)
 db = client["PersonalManager"]
 

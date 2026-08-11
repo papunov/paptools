@@ -64,7 +64,7 @@ description: >-
 ```python
 import pymongo
 
-client = pymongo.MongoClient("mongodb+srv://papunov:PAPUNOV87papunov87@papcl01-wqwkg.azure.mongodb.net/PersonalManager?retryWrites=true&w=majority")
+client = pymongo.MongoClient("mongodb+srv://<username>:<password>@papcl01-wqwkg.azure.mongodb.net/PersonalManager?retryWrites=true&w=majority")
 db = client["PersonalManager"]
 
 # Вземане на последните 5 изпълнени фонови задачи
