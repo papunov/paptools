@@ -1,0 +1,5 @@
+# Git ignore rules for paptools
+.DS_Store
+Thumbs.db
+*.tmp
+*.log
