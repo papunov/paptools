@@ -1,0 +1,14 @@
+{
+  "mcpServers": {
+    "mongodb-atlas": {
+      "command": "npx",
+      "args": [
+        "-y",
+        "mongodb-mcp-server@latest"
+      ],
+      "env": {
+        "MDB_MCP_CONNECTION_STRING": "mongodb+srv://<USERNAME>:<PASSWORD>@<CLUSTER>.mongodb.net/<DB_NAME>?retryWrites=true&w=majority"
+      }
+    }
+  }
+}
