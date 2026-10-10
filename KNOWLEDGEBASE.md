@@ -176,7 +176,12 @@ PersonalManager Database (51 Collections)
    - **Защита срещу безкрайно въртене на спинъра**: Забранено е обвързването на индикатора за зареждане с броя елементи (`IsLoading="Model.Count == 0"`). Винаги се използва булев флаг `isLoading = true` преди извикване на сервиз и `isLoading = false` в `finally` блок.
    - **Задължителни Празни Състояния**: Всеки `RadzenDataGrid` трябва да дефинира ясен локализиран текст `EmptyText="Няма намерени записи"`.
    - **Защита на Данните (Потвърждение при изтриване)**: Всички деструктивни действия (изтриване на коли, обслужвания, ремонти, гориво, лизинг, депозити, кеш, регулярни разходи) изискват потвърждение с `DialogService.Confirm`.
-   - **Модални Диалози**: Формите за добавяне и редакция се реализират като отделни Blazor компоненти, извиквани чрез `DialogService.OpenAsync<TDialog>`.
+   - **Мобилна Адаптивност & Viewport (Android & iOS)**:
+     - *Защита от Layout Viewport разтягане*: `html, body, app, .main, .content` задължително с `overflow-x: hidden !important; max-width: 100vw !important; min-width: 0 !important;`.
+     - *Плаващи бутони (FAB)*: Форсиран кръг `border-radius: 50% !important;` и отстояния със Safe Area (`env(safe-area-inset-bottom)`, `env(safe-area-inset-right)`) срещу препокриване от Android жестови ленти.
+     - *Таблици (`RadzenDataGrid`)*: Без `overflow: hidden` върху грида; плавен вътрешен touch скрол (`overflow-x: auto !important`); колоните Дата/Категория/Сума оптимизирани до `<= 350px`, за да са видими без скролване на малки екрани (360px–384px).
+     - *Компактен хедър*: Скриване на потребителския имейл под 576px с `display: none !important;` в `LoginDisplay`.
+     - *Viewport Meta Tag*: `viewport-fit=cover` и `maximum-scale=1.0, user-scalable=no` в `_Host.cshtml`.
 2. **Python (`PersonalManager-Data-Ingestion`)**:
    - `APScheduler` за периодични задачи.
    - Използване на `pymongo` с изрично обработване на `Decimal128` и `ObjectId`.

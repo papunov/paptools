@@ -129,33 +129,61 @@ public class BalanceModel : ComponentBase
 
 ## 6. Адаптивност за Мобилни Устройства (Mobile Responsiveness)
 
-За поддръжка на смартфони и таблети се прилагат следните адаптивни правила:
+За поддръжка на смартфони и таблети (включително Android устройства със специфика като Samsung Galaxy и iOS/iPhone) се прилагат следните задължителни архитектурни правила:
 
-```css
-@media (max-width: 900px) {
-    .salary-card, .calculator-card {
-        padding: 12px 4px 10px 4px;
-        margin: 14px 0;
-    }
-    .salary-title, .calculator-title {
-        font-size: 1.2rem;
-        padding: 14px 8px;
-    }
-    .salary-table th, .salary-table td {
-        font-size: 0.95rem;
-        padding: 6px 2px;
-    }
-}
+### 🛡️ 1. Защита от Разтягане на Екрана (Android Layout Viewport & Flexbox Overflow)
+В Android (Chromium/Blink) елементи с `min-width` или разширен хедър/таблица разтягат Layout Viewport на страницата над физическата ширина на екрана (напр. 360–384px на Samsung Galaxy). За да се предотврати хоризонтален скрол и разместване на fixed елементи:
+- `html, body { overflow-x: hidden !important; max-width: 100vw !important; width: 100%; }`
+- `app, .main { min-width: 0 !important; max-width: 100vw !important; width: 100%; overflow-x: hidden !important; }`
+- `.content { min-width: 0 !important; max-width: 100% !important; overflow-x: hidden !important; }`
+- На мобилни екрани (`< 768px`) страничният `padding` на `.content` се намалява от десктопния `px-4` (24px) на `0.75rem` (12px), за да остава максимално полезно пространство за съдържанието.
 
-@media (max-width: 767.98px) {
-    .main .top-row:not(.auth) {
-        display: none;
-    }
-    .sidebar {
-        width: 100%;
-    }
-}
-```
+### 🔴 2. Стандарти за Floating Action Button (FAB)
+- **Перфектен кръг**: Винаги се форсира `border-radius: 50% !important;` (без разчитане на класове от типа `rz-border-radius-10`).
+- **Safe Area поддръжка**: Отстоянията задължително отчитат долната Android жестова навигационна лента (gesture pill) и iOS home bar:
+  ```css
+  .fab-container {
+      position: fixed !important;
+      bottom: calc(24px + env(safe-area-inset-bottom, 0px)) !important;
+      right: calc(24px + env(safe-area-inset-right, 0px)) !important;
+      z-index: 1050 !important;
+  }
+  @media (max-width: 768px) {
+      .fab-container {
+          bottom: calc(18px + env(safe-area-inset-bottom, 0px)) !important;
+          right: calc(18px + env(safe-area-inset-right, 0px)) !important;
+      }
+      .fab-main-btn {
+          width: 56px !important;
+          height: 56px !important;
+          border-radius: 50% !important;
+      }
+  }
+  ```
+
+### 📊 3. RadzenDataGrid Мобилен Хоризонтален Скрол
+- **Забрана за `overflow: hidden`**: Строго забранено е слагането на `overflow: hidden` върху класа `.custom-grid` или DataGrid контейнери, тъй като това скрива крайните колони и блокира хоризонталния скрол.
+- **Вътрешен Touch скрол**: Задава се плавен touch скрол само за табличната част:
+  ```css
+  .custom-grid, .rz-datatable, .rz-data-grid,
+  .rz-data-grid .rz-grid-table-wrapper, .rz-data-grid .rz-data-grid-data {
+      overflow-x: auto !important;
+      -webkit-overflow-scrolling: touch !important;
+      max-width: 100% !important;
+  }
+  ```
+- **Оптимизирани ширини на колоните**: Ключовите колони (напр. Дата 90px, Категория 140px, Сума 120px = 350px) трябва да се събират в <= 350px, за да са изцяло видими на дисплея на мобилни телефони (360px–384px) веднага без начално скролване. Вторичните данни (коментари, бутони за редакция/изтриване) се достъпват с плавно плъзгане.
+
+### 👤 4. Компактен Мобилен Хедър (`LoginDisplay`)
+- На екрани `<= 576px` текстът на потребителския имейл се скрива с `display: none !important;` (задължително `!important`, за да пребори Bootstrap `.d-flex`), оставяйки само аватара, бутона за тема и изход.
+- На екран `<= 380px` текстът на бутона за изход се скрива (`.logout-btn-custom .rz-button-text { display: none !important; }`), оставяйки само компактна икона.
+
+### 📱 5. Viewport Meta Tag в `_Host.cshtml`
+- Задължителна конфигурация за PWA и мобилни браузъри:
+  ```html
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
+  ```
+  `viewport-fit=cover` активира правилната работа на `env(safe-area-inset-*)`, а `maximum-scale=1.0, user-scalable=no` предотвратява случайно мащабиране на layout viewport в Android.
 
 ---
 
@@ -262,5 +290,10 @@ protected override async Task OnInitializedAsync()
 3. ✅ **Защита при изтриване**: `DialogService.Confirm` с персонализиран въпрос и бутони на български език.
 4. ✅ **Зареждане без безкрайни спинъри**: Булев флаг `isLoading` с `finally { isLoading = false; }`.
 5. ✅ **Празни състояния**: Дефиниран `EmptyText` за всяка таблица `RadzenDataGrid`.
-6. ✅ **Адаптивност**: Тестван мобилен изглед при ширина `< 900px` и `< 768px`.
+6. ✅ **Адаптивност & Екрани (Android & iOS)**:
+   - Без хоризонтален скрол на страницата (`overflow-x: hidden !important` на `app`, `.main`).
+   - Таблиците имат вътрешен touch скрол (`overflow-x: auto`), без `overflow: hidden` върху грида.
+   - Основните колони се събират в `<= 350px`, за да са видими на телефони (360px–384px) веднага.
+   - Плаващите бутони (FAB) имат `border-radius: 50% !important;` и отстояния със `safe-area-inset`.
+   - Хедърът крие дълги потребителски имейли под 576px с `display: none !important;`.
 
