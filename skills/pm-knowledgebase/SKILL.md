@@ -26,10 +26,10 @@ paptools Skills Map
 ├── 📊 pm-investments                [Инвестиции: Акции, Брокери, Дивиденти, БНБ курсове, Фондове]
 ├── 🔧 pm-car-maintenance            [Автомобили: Профили, Планови обслужвания, Извънредни ремонти]
 ├── ⛽ pm-telematics-fuel            [Телематика: Дневници от пътувания, Горива, Разход, Лизинги]
-├── ⚙️ pm-data-ingestion-architecture [Data Ingestion: Python услуга, APScheduler, Docker/Systemd]
-├── 🧩 pm-data-ingestion-modules     [Data Ingestion: Модули - BNB, Market, Stock AI, GCP OCR]
+├── ⚙️ pm-data-ingestion-architecture [Data Ingestion: Python услуга, BlockingScheduler, Docker/GCP]
+├── 🧩 pm-data-ingestion-modules     [Data Ingestion: 6 модула - BNB, Market, Car/Currency AI, Stock AI, Automation, GCP]
 ├── 📝 pm-data-ingestion-prompts     [Data Ingestion: AI Промптове и шаблони за анализ]
-├── 🤖 pm-ai-analytics               [AI Анализи: Stock AI, BNB AI, Receipt OCR, JobStatuses]
+├── 🤖 pm-ai-analytics               [AI Анализи: Stock AI, BNB AI, Car AI, JobStatuses]
 └── 🛠️ pm-db-migrations              [MongoDB Миграции: Скриптове, преименуване, рефакториране]
 ```
 
@@ -44,8 +44,8 @@ paptools Skills Map
   - `DataModels`: MongoDB BSON модели.
 - **Data Ingestion Engine (`Python 3.11+`)**:
   - Услуга `PersonalManager-Data-Ingestion`.
-  - Използва `APScheduler` за фонови планирани задачи.
-  - Интеграция с `Google Document AI` (OCR) и `Google Gemini API` (AI Stock & BNB Analysis).
+  - Използва `APScheduler` (`BlockingScheduler`) за 6 фонови планирани задачи.
+  - Интеграция с `Google Gemini API` (AI Stock, Currency & Car Analysis) и GCS bucket (телематика).
 - **База Данни (`MongoDB Atlas Cloud`)**:
   - Сървър: `papcl01-wqwkg.azure.mongodb.net`
   - База: `PersonalManager` (51 колекции).

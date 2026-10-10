@@ -45,7 +45,7 @@
 | 🔧 **`pm-car-maintenance`** | Управление на автомобили, планирани обслужвания и извънредни ремонти. | [`skills/pm-car-maintenance/SKILL.md`](file:///C:/Users/papun/.gemini/config/plugins/paptools/skills/pm-car-maintenance/SKILL.md) |
 | ⛽ **`pm-telematics-fuel`** | Телематични логове (`CarDrivingStats`), зареждания (`FuelRecords`), разход и лизинги. | [`skills/pm-telematics-fuel/SKILL.md`](file:///C:/Users/papun/.gemini/config/plugins/paptools/skills/pm-telematics-fuel/SKILL.md) |
 | ⚙️ **`pm-data-ingestion-architecture`** | Архитектура и APScheduler на фоновата Python услуга `PersonalManager-Data-Ingestion`. | [`skills/pm-data-ingestion-architecture/SKILL.md`](file:///C:/Users/papun/.gemini/config/plugins/paptools/skills/pm-data-ingestion-architecture/SKILL.md) |
-| 🧩 **`pm-data-ingestion-modules`** | Подробно ръководство за модулите в Data-Ingestion (BNB, Market, Stock AI, GCP OCR). | [`skills/pm-data-ingestion-modules/SKILL.md`](file:///C:/Users/papun/.gemini/config/plugins/paptools/skills/pm-data-ingestion-modules/SKILL.md) |
+| 🧩 **`pm-data-ingestion-modules`** | Подробно ръководство за 6-те модула в Data-Ingestion (BNB, Market, Car/Currency AI, Stock AI, Daily Automation, GCP Telematics). | [`skills/pm-data-ingestion-modules/SKILL.md`](file:///C:/Users/papun/.gemini/config/plugins/paptools/skills/pm-data-ingestion-modules/SKILL.md) |
 | 📝 **`pm-data-ingestion-prompts`** | Управление и конфигуриране на AI промптовете и шаблоните за анализ. | [`skills/pm-data-ingestion-prompts/SKILL.md`](file:///C:/Users/papun/.gemini/config/plugins/paptools/skills/pm-data-ingestion-prompts/SKILL.md) |
 | 🤖 **`pm-ai-analytics`** | AI анализи за акции (`AIStocksInformations`), валути (`AIBNBRates`), OCR rules & JobStatuses. | [`skills/pm-ai-analytics/SKILL.md`](file:///C:/Users/papun/.gemini/config/plugins/paptools/skills/pm-ai-analytics/SKILL.md) |
 | 🛠️ **`pm-db-migrations`** | Скриптове за миграция на данни, рефакториране на MongoDB схеми и поддръжка. | [`skills/pm-db-migrations/SKILL.md`](file:///C:/Users/papun/.gemini/config/plugins/paptools/skills/pm-db-migrations/SKILL.md) |
@@ -130,13 +130,14 @@ PersonalManager Database (51 Collections)
 - **`ReceiptMaps` & `ReceiptExpressions`**: Мапинг правила и Regular Expressions за автоматично разпознаване на търговци и категории.
 
 ### ⚙️ 5.5 Data Ingestion & Фонова Обработка (Python)
-- **Услуга**: `PersonalManager-Data-Ingestion` (Python 3.11+ + `APScheduler`).
+- **Услуга**: `PersonalManager-Data-Ingestion` (Python 3.11+ + `BlockingScheduler`).
 - **Модули**:
-  - `bnb_exporter`: Ежедневен извличащ модул за валутни курсове от БНБ.
-  - `market_exporter`: Извличане на цени и фундаментални показатели на акции от Financial APIs / Yahoo Finance.
-  - `stock_ai`: AI анализ на акции чрез Google Gemini API.
-  - `gcp_document_ocr`: Обработка на сканирани касови бележки чрез OCR.
-  - `daily_automation`: Изпълнение на периодични задачи и проверка на статусите.
+  - `export_bnb.py`: Ежедневен експорт на валутни курсове от БНБ с автоматичен weekend/holiday fallback към последния работен ден.
+  - `market_exporter.py`: Скрейпър за фундаментални показатели на акции и ETF-и от StockAnalysis.com (`StockFundaments`), защитен с Rate Limiter, Chrome User-Agent и филтрация на ETF.
+  - `ai_data.py`: AI анализи с Google Gemini – изчисляване на темпо и прогнозен пробег спрямо `AnnualTarget` за автомобили (`UserSettings.Cars`) и 30-дневен трендов анализ на основни валути (`AIBNBRates`).
+  - `stock_ai_data.py`: Автоматизирано генериране на подробни AI инвестиционни досиета (`AIStocksInformations`) с runtime кеширане срещу дублирани заявки.
+  - `daily_automation.py`: Ежедневни финансови автоматизации: начисляване на лихви по депозити, падежиране на регулярни разходи (с коректна логика за края на месеца), конвертиране на мултивалутни абонаменти, оптимизирано $O(N)$ обобщение на баланси и анализ на горивната ефективност (`FuelConsumptionAnalysis`).
+  - `gcp_processor.py`: Парсър за телематични Excel логове от Google Cloud Storage (GCS bucket), синхронизация на километри (`Cars.CurrentKM`) и записи в `CarDrivingStats`.
 - **`JobStatuses`**: Мониторинг лог за всяко стартиране на фонова задача (`JobName`, `Status`, `DurationSeconds`, `Error`, `ExecutedAt`).
 
 ---
@@ -183,9 +184,11 @@ PersonalManager Database (51 Collections)
      - *Компактен хедър*: Скриване на потребителския имейл под 576px с `display: none !important;` в `LoginDisplay`.
      - *Viewport Meta Tag*: `viewport-fit=cover` и `maximum-scale=1.0, user-scalable=no` в `_Host.cshtml`.
 2. **Python (`PersonalManager-Data-Ingestion`)**:
-   - `APScheduler` за периодични задачи.
+   - `BlockingScheduler` за периодични задачи с graceful shutdown (`SIGTERM`/`SIGINT`).
+   - Сингълтон `MongoClient` за ефикасно управление на връзките към MongoDB Atlas.
+   - Задължителна нормализация на всички времеви маркери в UTC (`ensure_utc()`).
    - Използване на `pymongo` с изрично обработване на `Decimal128` и `ObjectId`.
-   - Логиране на всички грешки в колекцията `JobStatuses`.
+   - Логиране на резултатите от всяка задача в колекцията `JobStatuses` през централната обвивка `safe_execute`.
 
 ---
 

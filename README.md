@@ -25,8 +25,8 @@ paptools/
     ├── pm-investments/       # Акции, дивиденти, взаимни фондове, БНБ курсове
     ├── pm-car-maintenance/   # Автомобили & сервизна поддръжка
     ├── pm-telematics-fuel/   # Телематични логове, горива & лизинг
-    ├── pm-data-ingestion-architecture/ # Python фонова услуга & APScheduler
-    ├── pm-data-ingestion-modules/      # Модули за обработка (BNB, Market, OCR)
+    ├── pm-data-ingestion-architecture/ # Python фонова услуга, BlockingScheduler & GCP деплой
+    ├── pm-data-ingestion-modules/      # 6 модула за обработка (BNB, Market, AI, Automation, GCP)
     ├── pm-data-ingestion-prompts/      # AI промптове & шаблони за анализ
     ├── pm-ai-analytics/      # AI анализи за акции/валути & JobStatuses
     └── pm-db-migrations/     # Скриптове & миграции на база данни

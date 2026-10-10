@@ -10,7 +10,7 @@ description: >-
 
 ---
 
-## 1. AI Анализи за Акции и Валути
+## 1. AI Анализи за Акции, Валути и Автомобили
 
 ### 📈 1. AI Анализи на Акции (`AIStocksInformations`)
 Съдържа AI-генерирани фундаментални и технически доклади за даден тикер (акция/ETF):
@@ -28,6 +28,13 @@ description: >-
 - `Currency`: string (напр. `"USD"`, `"GBP"`)
 - `AIInformation`: string (Анализ на инфлация, лихвени проценти от централни банки и валутни тенденции)
 - `LastUpdated`: DateTime
+
+### 🚗 3. AI Анализи на Автомобили (`UserSettings.Cars`)
+Съдържа AI прогнози за годишния пробег, темпото на каране и сервизни съвети:
+- `Cars.$.Name`: string (напр. `"Mazda 3"`)
+- `Cars.$.AnnualTarget`: int (годишен таргет в км, напр. `15000`)
+- `Cars.$.AIInformation`: string (AI оценка на дневно темпо, прогноз за края на 365-дневния цикъл и необходими км/ден)
+- `Cars.$.AILastUpdated`: DateTime (UTC)
 
 ---
 
@@ -48,13 +55,19 @@ description: >-
 
 ## 3. Мониторинг на Фонови Задачи (`JobStatuses`)
 
-Услугата `Data-Ingestion` периодично изпълнява задачи за извличане на пазарни данни, БНБ курсове, генерация на AI анализи и обновяване на разходи. Всяко изпълнение записва статус в `JobStatuses`:
+Услугата `PersonalManager-Data-Ingestion` периодично изпълнява 6 планирани задачи и записва статус в `JobStatuses`:
 - `_id`: ObjectId
-- `JobName`: string (напр. `"BNB Exchange Rates Exporter"`, `"Stock AI Generator"`, `"Daily Automation"`)
-- `Status`: string (напр. `"SUCCESS"`, `"FAILED"`, `"RUNNING"`)
+- `JobName`: string — едно от 6-те стандартни имена на задачи:
+  - `"BNB Exchange Rates Exporter"` (експорт на БНБ фиксинги)
+  - `"Stock Market Exporter"` (фундаменти от StockAnalysis.com)
+  - `"AI Data Generator"` (AI анализи на автомобили и валути)
+  - `"Stock AI Generator"` (AI инвестиционни досиета за акции)
+  - `"Daily Automation"` (депозити, регулярни разходи, салда, разход на гориво)
+  - `"GCP Bucket Processor"` (телематични Excel логове от GCS bucket)
+- `Status`: string (`"SUCCESS"`, `"FAILED"`, `"RUNNING"`)
 - `DurationSeconds`: double/int (време на изпълнение в секунди)
 - `Error`: string (текст на грешката, ако `Status` е `"FAILED"`)
-- `ExecutedAt`: DateTime
+- `ExecutedAt`: DateTime (UTC)
 
 ---
 
