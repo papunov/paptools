@@ -71,6 +71,16 @@ paptools Skills Map
 
 ---
 
+## 🎨 Основни UI, UX & Dark Mode Инварианти (Blazor Server)
+
+- **Семантични CSS Токени**: Всички компоненти задължително ползват `var(--card-bg)`, `var(--text-primary)`, `var(--bg-primary)`, `var(--border-color)`. Строго са забранени: `bg-white`, `bg-light`, `text-dark`, `#1e293b`.
+- **Защита срещу безкрайно зареждане**: Забранено е `IsLoading="Model.Count == 0"`. Винаги се използва булев флаг `isLoading = true/false` с `try/finally`.
+- **Празни състояния**: Всеки `RadzenDataGrid` дефинира локализиран `EmptyText="Няма намерени записи"`.
+- **Защита на данните**: Деструктивните операции задължително изискват потвърждение с `DialogService.Confirm`.
+- **Code-Behind**: Пълно отделяне на C# кода в `.razor.cs`.
+
+---
+
 ## 🔌 MongoDB Atlas MCP Tools Quick Reference
 
 Агентът разполага с 31 MCP инструмента през `mongodb-mcp-server`:

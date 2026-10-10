@@ -159,11 +159,108 @@ public class BalanceModel : ComponentBase
 
 ---
 
-## 7. Чеклист за Нов UI Компонент
+## 7. Тъмна Тема & Модерни CSS Токени (Dark Mode Standards)
 
-Когато създавате нов екран или рефакторирате съществуващ компонент:
-1. ✅ Разделете кода в два файла: `Page.razor` и `Page.cs`.
-2. ✅ Опаковайте съдържанието в `.salary-card` или `.calculator-card`.
-3. ✅ Използвайте градиентния `sidebar` за навигация и `--rz-primary` (`#1b6ec2`) за заглавия/бутони.
-4. ✅ Форматирайте финансовите суми: зелено за приходи (`.text-success`), червено за разходи (`.text-danger`).
-5. ✅ Тествайте мобилния изглед при ширина `< 900px`.
+За пълна съвместимост между светла и тъмна тема е **абсолютно забранено** използването на твърдо кодирани светли цветове (`bg-white`, `bg-light`, `text-dark`, `#1e293b`, `#2d3436`, `#e2e8f0`) върху карти, таблици, заглавия, модални диалози или баджове.
+
+### 🎨 Основни CSS Променливи (Theme Tokens):
+| Променлива | Предназначение | Светла тема | Тъмна тема |
+| :--- | :--- | :--- | :--- |
+| `var(--card-bg)` | Фон на карти, панели и модални прозорци | `#ffffff` | `#1e293b` / `#0f172a` |
+| `var(--text-primary)` | Основен четим текст и заглавия | `#1e293b` | `#f8fafc` |
+| `var(--bg-primary)` | Основен фон на страницата | `#f8fafc` | `#0f172a` |
+| `var(--bg-secondary)` | Вторичен фон (инпути, баджове) | `#f1f5f9` | `#1e293b` |
+| `var(--bg-tertiary)` | Третичен фон (картички, информационни блокове) | `#e2e8f0` | `#334155` |
+| `var(--border-color)` | Рамки на карти, таблици и диалози | `#e2e8f0` | `rgba(255,255,255,0.12)` |
+
+### ⚠️ Анти-шаблони и корекции:
+- ❌ `<div class="bg-white">` ➔ ✅ `<div style="background-color: var(--card-bg); color: var(--text-primary);">`
+- ❌ `<h2 style="color: #1e293b;">` ➔ ✅ `<h2 style="color: var(--text-primary);">`
+- ❌ `<span class="badge bg-light text-dark">` ➔ ✅ `<span class="badge border" style="background-color: var(--bg-tertiary); color: var(--text-primary); border-color: var(--border-color) !important;">`
+- ❌ `<span class="fw-bold text-dark">` ➔ ✅ `<span class="fw-bold" style="color: var(--text-primary);">`
+
+---
+
+## 8. UX Защита на Данните & Диалози за Потвърждение (Data Protection)
+
+При всяко действие за перманентно изтриване на данни от потребителя (автомобили, сервизни записи, ремонти, горива, лизинги, повтарящи се разходи, депозити, валути), **задължително** се изисква предварително потвърждение чрез `DialogService.Confirm`.
+
+### Стандартен шаблон за потвърждение:
+```csharp
+[Inject] public DialogService DialogService { get; set; }
+
+private async Task DeleteItem(ItemModel item)
+{
+    var confirm = await DialogService.Confirm(
+        $"Сигурни ли сте, че искате да изтриете '{item.Name}'?",
+        "Потвърждение за изтриване",
+        new ConfirmOptions 
+        { 
+            OkButtonText = "Да, изтрий", 
+            CancelButtonText = "Отказ" 
+        });
+
+    if (confirm != true) return;
+
+    await Service.DeleteAsync(item.Id);
+    NotificationService.Notify(NotificationSeverity.Success, "Успех", "Записът е изтрит");
+    await Reload();
+}
+```
+
+---
+
+## 9. Предотвратяване на Безкрайно Зареждане (Infinite Spinners) & Empty States
+
+### 🚫 Анти-шаблон с `Count == 0`:
+Никога не използвайте `IsLoading="Model.Count == 0"` или `@if (Model.Count == 0 || exporting)`:
+- При легитимно празна колекция (0 записи), спинърът за зареждане се върти безкрайно и блокира потребителския интерфейс.
+
+### ✅ Правилен подход:
+Използвайте експлицитен булев флаг `isLoading`, който се управлява в `OnInitializedAsync`:
+```csharp
+private bool isLoading = true;
+
+protected override async Task OnInitializedAsync()
+{
+    isLoading = true;
+    try
+    {
+        Model = await Service.GetDataAsync();
+    }
+    finally
+    {
+        isLoading = false;
+    }
+}
+```
+
+### 🏷️ Задължителен `EmptyText` за RadzenDataGrid:
+Всяка таблица `RadzenDataGrid` трябва да има дефиниран `EmptyText` на български език:
+```razor
+<RadzenDataGrid Data="@Model" TItem="ItemModel" 
+                IsLoading="@isLoading"
+                EmptyText="Няма намерени записи."
+                Density="Density.Compact" Class="custom-grid shadow-sm">
+```
+
+---
+
+## 10. Модални Диалози и Форми (Radzen Dialogs)
+
+Всички диалогови компоненти (напр. `AddCarDialog`, `AddMaintenanceDialog`, `AddFuelDialog`, `AddLeaseContractDialog`, `AddLeaseEntryDialog`, `AddNewTransaction`):
+1. **Тематичен контейнер**: Използват `var(--card-bg)` и `var(--text-primary)` без фиксиран `bg-white`.
+2. **Контроли за избор**: `RadzenDatePicker`, `RadzenNumeric`, `RadzenDropDown` и `RadzenSelectBar` се оразмеряват с пълен `w-100` на мобилни екрани и отстояния `mb-3`.
+3. **Затваряне**: Съдържат бутон за отказ, извикващ `DialogService.Close(null)`.
+
+---
+
+## 11. Чеклист за Нов или Рефакториран UI Компонент
+
+1. ✅ **Разделение на кода**: `Page.razor` за разпис и `Page.cs` (или `.razor.cs`) за C# логика.
+2. ✅ **Тъмна тема**: Без твърдо кодирани `bg-white`, `bg-light`, `text-dark`, `#1e293b`. Използване на `var(--card-bg)`, `var(--text-primary)`, `var(--border-color)`.
+3. ✅ **Защита при изтриване**: `DialogService.Confirm` с персонализиран въпрос и бутони на български език.
+4. ✅ **Зареждане без безкрайни спинъри**: Булев флаг `isLoading` с `finally { isLoading = false; }`.
+5. ✅ **Празни състояния**: Дефиниран `EmptyText` за всяка таблица `RadzenDataGrid`.
+6. ✅ **Адаптивност**: Тестван мобилен изглед при ширина `< 900px` и `< 768px`.
+

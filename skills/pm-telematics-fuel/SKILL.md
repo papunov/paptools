@@ -120,23 +120,28 @@ int totalTrips = drivingStats.Count;
 
 ---
 
-## 3. Заявки през MongoDB Atlas MCP Server (`mongodb-mcp-server`)
+---
 
-### Вземане на средния разход на гориво по автомобил през MCP `aggregate`:
-```json
-{
-  "connectionId": "preconfigured",
-  "database": "PersonalManager",
-  "collection": "FuelConsumptionAnalysis",
-  "pipeline": [
-    {
-      "$group": {
-        "_id": "$CarId",
-        "avgConsumptionL100km": { "$avg": "$AvgConsumption" },
-        "totalDistanceKm": { "$sum": "$DistanceKm" },
-        "totalLiters": { "$sum": "$Liters" }
-      }
-    }
-  ]
-}
-```
+## 4. UI Компоненти & Диалози (`Web.ManagerV2/Components/Cars`)
+
+### ⛽ 1. История на зарежданията (`FuelRecords.razor`):
+- Таблица за зареждания на гориво с филтрация по автомобил и преглед на разходите.
+- **Диалози**: `AddFuelDialog.razor` за въвеждане на ново или редактиране на съществуващо зареждане.
+- **Защита при изтриване**: `DeleteFuelRecord` задължително изисква потвърждение чрез:
+  ```csharp
+  var confirm = await DialogService.Confirm(
+      "Сигурни ли сте, че искате да изтриете това зареждане?", 
+      "Потвърждение за изтриване", 
+      new ConfirmOptions { OkButtonText = "Да, изтрий", CancelButtonText = "Отказ" });
+  if (confirm != true) return;
+  ```
+- **Тъмна тема**: Заглавията ползват `var(--text-primary)`, а картите – `var(--card-bg)`.
+
+### 📄 2. Лизингови договори & вноски (`CarLeasing.razor`):
+- Управление на лизингови договори, остатъчна стойност и погасителни вноски.
+- **Диалози**: `AddLeaseContractDialog.razor` и `AddLeaseEntryDialog.razor`.
+- **Защита при изтриване**:
+  - `DeleteContract`: Потвърждение преди изтриване на целия договор и вноските към него.
+  - `DeleteEntry`: Потвърждение преди изтриване на конкретна вноска.
+- **Тематична съвместимост**: Лизинговите карти и графики са съобразени с тъмната цветова палитра.
+
