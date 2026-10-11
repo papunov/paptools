@@ -283,17 +283,41 @@ protected override async Task OnInitializedAsync()
 
 ---
 
-## 11. Чеклист за Нов или Рефакториран UI Компонент
+## 11. Навигационни Хлябни Трохи (Breadcrumbs & URL Mapping)
+
+Всеки маршрут в Blazor приложението се визуализира в навигационната пътека (Breadcrumbs) в горната част на екрана през [`MainLayout.razor`](file:///c:/Users/papun/RiderProjects/PersonalManager/PersonalManager/Web.ManagerV2/Shared/MainLayout.razor).
+
+### 🏷️ Задължителен Мапинг в `_mapUrl`:
+При добавяне на всяка нова страница (`@page "/segment"` или `@page "/category/subpage"`), съответният URL сегмент **задължително** трябва да се регистрира в речника `_mapUrl` в `MainLayout.razor` с неговия български превод:
+```csharp
+private readonly Dictionary<string, string> _mapUrl = new Dictionary<string, string>() {
+    // ...
+    {"cars", "Автомобили"},
+    {"documents", "Документи"},
+    {"maintenance", "Сервиз"},
+    {"fuel-records", "Зареждане с гориво"},
+    {"leasing", "Лизинг"},
+    {"statistics", "Статистика"},
+    {"cloud-upload", "GCP Качване"}
+};
+```
+> **⚠️ Внимание**: Ако сегментът не е деклариран в `_mapUrl`, навигационната лента ще изпише суровия английски URL път (напр. `» documents` вместо `» Документи`).
+
+---
+
+## 12. Чеклист за Нов или Рефакториран UI Компонент
 
 1. ✅ **Разделение на кода**: `Page.razor` за разпис и `Page.cs` (или `.razor.cs`) за C# логика.
-2. ✅ **Тъмна тема**: Без твърдо кодирани `bg-white`, `bg-light`, `text-dark`, `#1e293b`. Използване на `var(--card-bg)`, `var(--text-primary)`, `var(--border-color)`.
-3. ✅ **Защита при изтриване**: `DialogService.Confirm` с персонализиран въпрос и бутони на български език.
-4. ✅ **Зареждане без безкрайни спинъри**: Булев флаг `isLoading` с `finally { isLoading = false; }`.
-5. ✅ **Празни състояния**: Дефиниран `EmptyText` за всяка таблица `RadzenDataGrid`.
-6. ✅ **Адаптивност & Екрани (Android & iOS)**:
+2. ✅ **Регистрация в Breadcrumbs (`_mapUrl`)**: Задължително добавяне на URL сегмента в `_mapUrl` в `MainLayout.razor` с българско име.
+3. ✅ **Тъмна тема**: Без твърдо кодирани `bg-white`, `bg-light`, `text-dark`, `#1e293b`. Използване на `var(--card-bg)`, `var(--text-primary)`, `var(--border-color)`.
+4. ✅ **Защита при изтриване**: `DialogService.Confirm` с персонализиран въпрос и бутони на български език.
+5. ✅ **Зареждане без безкрайни спинъри**: Булев флаг `isLoading` с `finally { isLoading = false; }`.
+6. ✅ **Празни състояния**: Дефиниран `EmptyText` за всяка таблица `RadzenDataGrid`.
+7. ✅ **Адаптивност & Екрани (Android & iOS)**:
    - Без хоризонтален скрол на страницата (`overflow-x: hidden !important` на `app`, `.main`).
    - Таблиците имат вътрешен touch скрол (`overflow-x: auto`), без `overflow: hidden` върху грида.
    - Основните колони се събират в `<= 350px`, за да са видими на телефони (360px–384px) веднага.
    - Плаващите бутони (FAB) имат `border-radius: 50% !important;` и отстояния със `safe-area-inset`.
    - Хедърът крие дълги потребителски имейли под 576px с `display: none !important;`.
+
 

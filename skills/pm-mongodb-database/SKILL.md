@@ -47,8 +47,12 @@ description: >-
 - **`AIStocksInformations`** (26 документа): AI-генерирани фундаментални и технически анализи на акции (`StockId`, `Ticker`, `StockExchangeCode`, `AIInformation`, `LastUpdated`, `UserId`).
 - **`AIBNBRates`** (3 документа): AI прогнози и анализи за валутни курсове (`Currency`, `AIInformation`, `LastUpdated`).
 
-### 🚗 3. Автомобили, Поддръжка, Телематика, Горива и Лизинг (8 колекции)
+### 🚗 3. Автомобили, Поддръжка, Телематика, Горива и Лизинг (10 колекции)
 - **`Cars`** (3 документа): Профили на автомобили (`UserId`, `Name`, `Year`, `Plate_Number`, `Brand`, `Model`, `InitialKM`, `CurrentKM`, `IsActive`).
+- **`CarDocuments`**: Документи, застраховки (ГО, Каско), ГТП, Винетка, Данък МПС (`UserId`, `CarId`, `DocumentType`, `Title`, `ExpiryDate`, `HasInstallments`, `NextInstallmentDueDate`, `CostEUR`, `EcoCategory`, `Notes`, `IsActive`).
+  - *Индекси:* `idx_user_active_expiry` (`UserId: 1, IsActive: 1, ExpiryDate: 1`), `idx_user_car_active_expiry` (`UserId: 1, CarId: 1, IsActive: 1, ExpiryDate: 1`), `idx_user_installments_due` (`UserId: 1, HasInstallments: 1, NextInstallmentDueDate: 1`).
+- **`CarServiceIntervals`**: Сервизни интервали и превантивна поддръжка (`UserId`, `CarId`, `Title`, `Category`, `IntervalKM`, `IntervalMonths`, `LastServiceKM`, `LastServiceDate`, `RecommendedSpec`, `Notes`, `IsActive`, `CreatedAt`, `LastUpdated`).
+  - *Индекси:* `idx_user_active` (`UserId: 1, IsActive: 1`), `idx_user_car_active` (`UserId: 1, CarId: 1, IsActive: 1`).
 - **`CarServices`** (6 документа): Планови сервизни обслужвания (`CarId`, `UserId`, `Date`, `OdometerKM`, `Name`, `Description`, `PartsCost`, `LaborCost`).
 - **`CarRepairs`** (22 документа): Извънредни ремонти (`CarId`, `UserId`, `Date`, `OdometerKM`, `Name`, `Description`, `PartsCost`, `LaborCost`).
 - **`CarDrivingStats`** (736 документа): Телематични логове от пътувания (`CarId`, `UserId`, `Date`, `IgnitionTime`, `EndTime`, `TimeMinutes`, `DistanceKm`, `CarName`, `OriginalFileName`).
@@ -138,6 +142,13 @@ db.StockFundaments.createIndex({ "Ticker": 1, "StockExchangeCode": 1 });
 // Salaries & Recurring
 db.Salaries.createIndex({ "UserId": 1, "Month": 1, "Year": 1, "_id": -1 });
 db.RecurringExpenses.createIndex({ "AutomaticPayment": 1, "DayOfMonth": 1 });
+
+// Cars, Documents & Service Intervals
+db.CarDocuments.createIndex({ "UserId": 1, "IsActive": 1, "ExpiryDate": 1 });
+db.CarDocuments.createIndex({ "UserId": 1, "CarId": 1, "IsActive": 1, "ExpiryDate": 1 });
+db.CarDocuments.createIndex({ "UserId": 1, "HasInstallments": 1, "NextInstallmentDueDate": 1 });
+db.CarServiceIntervals.createIndex({ "UserId": 1, "IsActive": 1 });
+db.CarServiceIntervals.createIndex({ "UserId": 1, "CarId": 1, "IsActive": 1 });
 
 // Telematics & Logs
 db.CarDrivingStats.createIndex({ "UserId": 1, "CarId": 1, "Date": -1 });

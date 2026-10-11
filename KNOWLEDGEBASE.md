@@ -183,6 +183,7 @@ PersonalManager Database (51 Collections)
      - *Таблици (`RadzenDataGrid`)*: Без `overflow: hidden` върху грида; плавен вътрешен touch скрол (`overflow-x: auto !important`); колоните Дата/Категория/Сума оптимизирани до `<= 350px`, за да са видими без скролване на малки екрани (360px–384px).
      - *Компактен хедър*: Скриване на потребителския имейл под 576px с `display: none !important;` в `LoginDisplay`.
      - *Viewport Meta Tag*: `viewport-fit=cover` и `maximum-scale=1.0, user-scalable=no` в `_Host.cshtml`.
+   - **Регистрация в Breadcrumbs (`_mapUrl`)**: Всеки нов маршрут (`@page`) **задължително** трябва да има регистриран съответен URL сегмент в речника `_mapUrl` в [`MainLayout.razor`](file:///c:/Users/papun/RiderProjects/PersonalManager/PersonalManager/Web.ManagerV2/Shared/MainLayout.razor) с българско име (напр. `{"documents", "Документи"}`), за да не се показва суровият английски URL път в навигационните хлябни трохи.
 2. **Python (`PersonalManager-Data-Ingestion`)**:
    - `BlockingScheduler` за периодични задачи с graceful shutdown (`SIGTERM`/`SIGINT`).
    - Сингълтон `MongoClient` за ефикасно управление на връзките към MongoDB Atlas.
