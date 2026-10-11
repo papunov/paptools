@@ -6,13 +6,15 @@ description: >-
 
 # PersonalManager MongoDB Production Database Guide
 
-Базата данни на **PersonalManager** се гоства в **MongoDB Atlas** (Cluster: `papcl01-wqwkg.azure.mongodb.net`, Database: `PersonalManager`) и съдържа **53 реални колекции**, разпределени в 5 основни функционални домейна.
+Базата данни на **PersonalManager** се гоства в **MongoDB Atlas** (Cluster: `papcl01-wqwkg.azure.mongodb.net`, Database: `PersonalManager`) и съдържа **54 реални колекции**, разпределени в 5 основни функционални домейна.
 
 ---
 
 ## 1. Пълен Списък на Колекциите по Домейни
 
-### 💰 1. Финанси, Бюджети, Превалутиране, Спестявания, Нетно Богатство и Пликове (18 колекции)
+### 💰 1. Финанси, Бюджети, Превалутиране, Спестявания, Нетно Богатство, Пликове и FIRE (19 колекции)
+- **`FireSettings`**: Персонализирани FIRE параметри за финансова независимост и ранно пенсиониране (`UserId`, `CurrentAge`, `TargetRetirementAge`, `AnnualReturnRate`, `SafeWithdrawalRate`, `InflationRate`, `CustomMonthlyExpenses`, `CustomMonthlySavings`, `CustomInvestedAssets`, `SelectedFireType`, `LastUpdated`).
+  - *Индекси:* `idx_fire_user` (`UserId: 1`).
 - **`CategoryBudgets`**: Месечни бюджети по категории по метода на пликовете (Envelope Budgeting) (`UserId`, `SalaryId`, `CategoryId`, `CategoryName`, `BudgetLimit`, `Note`, `CreatedAt`, `LastUpdated`).
   - *Индекси:* `idx_user_salary_cat` (`UserId: 1, SalaryId: 1, CategoryId: 1`), `idx_user_cat` (`UserId: 1, CategoryId: 1`).
 - **`NetWorthSnapshots`**: Исторически снимки на нетното богатство (`UserId`, `Date`, `TotalNetWorth`, `TotalAssets`, `TotalLiabilities`, `CashAssets`, `InvestmentAssets`, `CarAssets`, `LeaseLiabilities`, `PlannedExpenseLiabilities`, `Note`).
