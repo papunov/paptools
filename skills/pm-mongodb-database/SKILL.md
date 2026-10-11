@@ -19,6 +19,8 @@ description: >-
   - *Индекси:* `idx_user_salary_cat` (`UserId: 1, SalaryId: 1, CategoryId: 1`), `idx_user_cat` (`UserId: 1, CategoryId: 1`).
 - **`NetWorthSnapshots`**: Исторически снимки на нетното богатство (`UserId`, `Date`, `TotalNetWorth`, `TotalAssets`, `TotalLiabilities`, `CashAssets`, `InvestmentAssets`, `CarAssets`, `LeaseLiabilities`, `PlannedExpenseLiabilities`, `Note`).
   - *Индекси:* `idx_networth_user_date` (`UserId: 1, Date: 1`).
+- **`InflationRates`**: Официални годишни равнища на инфлация от НСИ (HICP), Евростат и Световната Банка за България и Еврозоната (`Year`, `RateBulgaria`, `RateEurozone`, `CumulativeIndexBG`, `CumulativeIndexEU`, `Note`, `LastUpdated`).
+  - *Индекси:* `idx_inflation_year` (`Year: 1`, уникален).
 - **`Transactions`** (12,118 документа): Основни финансови транзакции (`UserId`, `SalaryId`, `CategoryId`, `CategoryName`, `Sum`, `Comment`, `Expense`, `AddedToSavings`, `Marked`, `AddedOn`).
 - **`Salaries`** (108 документа): Месечни бюджетни периоди (`UserId`, `Name`, `Month`, `Year`, `Sum`, `AddedOn`, `Locked`).
 - **`SumSalaries`** (106 документа): Агрегирани баланси по заплати (`UserId`, `SalaryId`, `Name`, `Month`, `Year`, `SalarySum`, `IncomeSum`, `ExpenseSum`, `BalanceSum`, `SumCategories`).
