@@ -134,7 +134,8 @@ if ai_info:
 - `Gemini_API_KEY`: API ключ за Google Gemini (взема се от Google AI Studio).
 - `Telegram_Bot_Token`: Токен на бота от `@BotFather`.
 - `Telegram_Chat_ID`: Лично числово ID на потребителя (от `@userinfobot` или автоматично свързано).
-- `Telegram_Bot_Enabled`: Булев флаг (`true`/`false`) за активиране на фоновата услуга.
+- `Telegram_Webhook_URL`: Базов URL за Webhook (напр. `https://papmgr2.azurewebsites.net`).
+- `Telegram_Bot_Enabled`: Булев флаг (`true`/`false`) за активиране на бота.
 
 ### 🧠 2. Gemini AI Сървиз (`IGeminiAiService`, `GeminiAiService`)
 - **Модел**: `gemini-2.5-flash` (с автоматичен fallback към `gemini-1.5-flash`).
@@ -142,13 +143,22 @@ if ai_info:
 - **Multimodal Vision**: Анализира директно снимка на касова бележка от Telegram (извлича обект, тотал и категория).
 - **Финансови въпроси**: Отговаря на естествен език на въпроси за баланс и разходи.
 
-### 🤖 3. Telegram Бот Услуга (`TelegramBotHostedService`)
-- Работи като фонов `BackgroundService` в `Web.ManagerV2` през **Long-Polling** (без изискване за публичен IP адрес или пренасочване на портове).
-- **Автоматично свързване**: Ако `Telegram_Chat_ID` е празен, при първо съобщение `/start` ботът автоматично запазва `ChatId` на потребителя в базата данни.
-- **Сигурност**: Игнорира и блокира всякакви съобщения от неавторизирани потребители.
-- **Директен запис**: Записва разходите моментално през `IManagerService.AddTransaction(...)`.
+### 🤖 3. Telegram Бот Архитектура: Webhook (Azure) срещу Polling (Local)
+- **Споделена обработка (`ITelegramBotService`, `TelegramBotService`)**:
+  - Цялата логика по обработка на съобщения, OCR снимки, Gemini класификация и запис в MongoDB е капсулирана в `TelegramBotService`.
+  - Включва `SendSafeMessageAsync` за автоматичен fallback от Markdown към чист текст при грешки от невалидни символи.
+- **Работа при заспиване в Azure Free Plan (F1) чрез Webhook**:
+  - На безплатен план на Azure сайтът заспива след 20 минути неактивност, а опцията „Always On“ липсва.
+  - Чрез **`TelegramWebhookController`** (`/api/telegram/webhook` с атрибут `[AllowAnonymous]`), всяко ново съобщение от телефона кара сървърите на Telegram да изпратят входяща HTTPS POST заявка към Azure.
+  - **Тази заявка мигновено събужда заспалия сайт (Cold Start)**, транзакцията се обработва от Gemini и се записва в MongoDB, а потребителят получава обратен отговор в чата без забавяне и без нужда от платен Always On план!
+- **Локален дебъг чрез Long-Polling (`TelegramBotHostedService`)**:
+  - Когато `Telegram_Webhook_URL` е празен, ботът автоматично изтрива webhook регистрацията в Telegram и превключва на Long-Polling (`GetUpdates`).
+  - Това позволява пълен локален дебъг в Rider без публични адреси или тунели.
 
 ### 🎛️ 4. Потребителски интерфейс (`Settings.razor` / `/settings`)
-- Карта **„AI & Telegram Бот Интеграция“** с маскирани полета за въвеждане и запазване на трите ключа.
-- Бутон за бърз тест на връзката с Google Gemini API.
+- Карта **„AI & Telegram Бот Интеграция“** с маскирани полета за въвеждане и запазване на ключовете.
+- Конфигурация за **Webhook URL (Azure / Без заспиване)** с бутони:
+  - 🌐 *Активирай Webhook (Azure)* — регистрира URL-а в Telegram и превключва режима.
+  - 🔄 *Превключи на Polling (Local)* — изтрива Webhook-а от Telegram и активира локалния polling.
+  - ℹ️ *Статус* — извлича информация за текущото състояние и чакащи съобщения от Telegram API.
 - Вграден **AI Тестов Симулатор** за изпробване на категоризацията директно от браузъра.
