@@ -6,13 +6,15 @@ description: >-
 
 # PersonalManager MongoDB Production Database Guide
 
-Базата данни на **PersonalManager** се гоства в **MongoDB Atlas** (Cluster: `papcl01-wqwkg.azure.mongodb.net`, Database: `PersonalManager`) и съдържа **51 реални колекции**, разпределени в 5 основни функционални домейна.
+Базата данни на **PersonalManager** се гоства в **MongoDB Atlas** (Cluster: `papcl01-wqwkg.azure.mongodb.net`, Database: `PersonalManager`) и съдържа **52 реални колекции**, разпределени в 5 основни функционални домейна.
 
 ---
 
 ## 1. Пълен Списък на Колекциите по Домейни
 
-### 💰 1. Финанси, Бюджети, Превалутиране и Спестявания (16 колекции)
+### 💰 1. Финанси, Бюджети, Превалутиране, Спестявания и Нетно Богатство (17 колекции)
+- **`NetWorthSnapshots`**: Исторически снимки на нетното богатство (`UserId`, `Date`, `TotalNetWorth`, `TotalAssets`, `TotalLiabilities`, `CashAssets`, `InvestmentAssets`, `CarAssets`, `LeaseLiabilities`, `PlannedExpenseLiabilities`, `Note`).
+  - *Индекси:* `idx_networth_user_date` (`UserId: 1, Date: 1`).
 - **`Transactions`** (12,118 документа): Основни финансови транзакции (`UserId`, `SalaryId`, `CategoryId`, `CategoryName`, `Sum`, `Comment`, `Expense`, `AddedToSavings`, `Marked`, `AddedOn`).
 - **`Salaries`** (108 документа): Месечни бюджетни периоди (`UserId`, `Name`, `Month`, `Year`, `Sum`, `AddedOn`, `Locked`).
 - **`SumSalaries`** (106 документа): Агрегирани баланси по заплати (`UserId`, `SalaryId`, `Name`, `Month`, `Year`, `SalarySum`, `IncomeSum`, `ExpenseSum`, `BalanceSum`, `SumCategories`).
@@ -48,7 +50,7 @@ description: >-
 - **`AIBNBRates`** (3 документа): AI прогнози и анализи за валутни курсове (`Currency`, `AIInformation`, `LastUpdated`).
 
 ### 🚗 3. Автомобили, Поддръжка, Телематика, Горива и Лизинг (10 колекции)
-- **`Cars`** (3 документа): Профили на автомобили (`UserId`, `Name`, `Year`, `Plate_Number`, `Brand`, `Model`, `InitialKM`, `CurrentKM`, `IsActive`).
+- **`Cars`** (3 документа): Профили на автомобили (`UserId`, `Name`, `Year`, `Plate_Number`, `Brand`, `Model`, `InitialKM`, `CurrentKM`, `IsActive`, `EstimatedMarketValue`).
 - **`CarDocuments`**: Документи, застраховки (ГО, Каско), ГТП, Винетка, Данък МПС (`UserId`, `CarId`, `DocumentType`, `Title`, `ExpiryDate`, `HasInstallments`, `NextInstallmentDueDate`, `CostEUR`, `EcoCategory`, `Notes`, `IsActive`).
   - *Индекси:* `idx_user_active_expiry` (`UserId: 1, IsActive: 1, ExpiryDate: 1`), `idx_user_car_active_expiry` (`UserId: 1, CarId: 1, IsActive: 1, ExpiryDate: 1`), `idx_user_installments_due` (`UserId: 1, HasInstallments: 1, NextInstallmentDueDate: 1`).
 - **`CarServiceIntervals`**: Сервизни интервали и превантивна поддръжка (`UserId`, `CarId`, `Title`, `Category`, `IntervalKM`, `IntervalMonths`, `LastServiceKM`, `LastServiceDate`, `RecommendedSpec`, `Notes`, `IsActive`, `CreatedAt`, `LastUpdated`).
