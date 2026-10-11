@@ -48,14 +48,14 @@ paptools Skills Map
   - Интеграция с `Google Gemini API` (AI Stock, Currency & Car Analysis) и GCS bucket (телематика).
 - **База Данни (`MongoDB Atlas Cloud`)**:
   - Сървър: `papcl01-wqwkg.azure.mongodb.net`
-  - База: `PersonalManager` (52 колекции).
+  - База: `PersonalManager` (53 колекции).
 
 ---
 
-## 🗄️ Списък на Колекциите по Домейни (52 Колекции)
+## 🗄️ Списък на Колекциите по Домейни (53 Колекции)
 
-### 💰 1. Финанси & Нетно Богатство (17)
-`NetWorthSnapshots`, `Transactions`, `Salaries`, `SumSalaries`, `Categories`, `PlannedExpenses`, `RecurringExpenses`, `Subscriptions`, `ConvertedTransactions`, `ConvertedSalaries`, `Savings`, `SavingTransactions`, `FrequentComments`, `TransactionAutoCompletes`, `TransactionsAutoCompletes`, `Notes`, `Reminders`, `Calculations`.
+### 💰 1. Финанси, Бюджети & Пликове (18)
+`CategoryBudgets`, `NetWorthSnapshots`, `Transactions`, `Salaries`, `SumSalaries`, `Categories`, `PlannedExpenses`, `RecurringExpenses`, `Subscriptions`, `ConvertedTransactions`, `ConvertedSalaries`, `Savings`, `SavingTransactions`, `FrequentComments`, `TransactionAutoCompletes`, `TransactionsAutoCompletes`, `Notes`, `Reminders`, `Calculations`.
 
 ### 📈 2. Инвестиции & AI (17)
 `Stocks`, `InvestStockOrders`, `StockPrices`, `StockFundaments`, `InvestmentBrokers`, `BrokerFees`, `Cashbacks`, `CashInterests`, `CashCurrencies`, `Dividends`, `Funds`, `FundOrders`, `Deposits`, `DepositPayments`, `BNBRates`, `AIStocksInformations`, `AIBNBRates`.
