@@ -1,7 +1,7 @@
 ---
 name: pm-knowledgebase
 description: >-
-  Централна база знания (Knowledge Base) и главен индекс за екосистемата PersonalManager и модула paptools: системна архитектура, 52 MongoDB Atlas колекции, домейни (финанси, инвестиции, автомобили, data ingestion, AI анализи), пълна карта на всички 13 скила, MCP инструменти и стандарти за разработка.
+  Централна база знания (Knowledge Base) и главен индекс за екосистемата PersonalManager и модула paptools: системна архитектура, 56 MongoDB Atlas колекции, домейни (финанси, инвестиции, автомобили, data ingestion, AI анализи), пълна карта на всички 13 скила, MCP инструменти и стандарти за разработка.
 ---
 
 # PersonalManager & paptools Knowledge Base (Централен Справочник)
@@ -20,7 +20,7 @@ description: >-
 paptools Skills Map
 ├── 🧠 pm-knowledgebase              [Централна база знания и главен индекс]
 ├── 🏗️ pm-architecture               [Архитектура: .NET Blazor Server, Web API, SysFunctions, Secrets]
-├── 🗄️ pm-mongodb-database          [MongoDB Atlas: 52 колекции, 5 домейни, BSON типове, MCP, индекси]
+├── 🗄️ pm-mongodb-database          [MongoDB Atlas: 56 колекции, 5 домейни, BSON типове, MCP, индекси]
 ├── 🎨 pm-blazor-ui                  [Blazor UI: Code-behind, цветова палитра, Bootstrap компоненти]
 ├── 💳 pm-finance-core               [Финанси: Транзакции, Заплати, Спестявания, Рекурентни разходи, Нетно богатство]
 ├── 📊 pm-investments                [Инвестиции: Акции, Брокери, Дивиденти, БНБ курсове, Фондове]
@@ -48,17 +48,17 @@ paptools Skills Map
   - Интеграция с `Google Gemini API` (AI Stock, Currency & Car Analysis) и GCS bucket (телематика).
 - **База Данни (`MongoDB Atlas Cloud`)**:
   - Сървър: `papcl01-wqwkg.azure.mongodb.net`
-  - База: `PersonalManager` (54 колекции).
+  - База: `PersonalManager` (56 колекции).
 
 ---
 
-## 🗄️ Списък на Колекциите по Домейни (54 Колекции)
+## 🗄️ Списък на Колекциите по Домейни (56 Колекции)
 
 ### 💰 1. Финанси, Бюджети, Пликове & FIRE (19)
 `FireSettings`, `CategoryBudgets`, `NetWorthSnapshots`, `Transactions`, `Salaries`, `SumSalaries`, `Categories`, `PlannedExpenses`, `RecurringExpenses`, `Subscriptions`, `ConvertedTransactions`, `ConvertedSalaries`, `Savings`, `SavingTransactions`, `FrequentComments`, `TransactionAutoCompletes`, `TransactionsAutoCompletes`, `Notes`, `Reminders`, `Calculations`.
 
-### 📈 2. Инвестиции & AI (17)
-`Stocks`, `InvestStockOrders`, `StockPrices`, `StockFundaments`, `InvestmentBrokers`, `BrokerFees`, `Cashbacks`, `CashInterests`, `CashCurrencies`, `Dividends`, `Funds`, `FundOrders`, `Deposits`, `DepositPayments`, `BNBRates`, `AIStocksInformations`, `AIBNBRates`.
+### 📈 2. Инвестиции & AI (19)
+`RebalancingTargetSettings`, `AIRebalancingAnalyses`, `Stocks`, `InvestStockOrders`, `StockPrices`, `StockFundaments`, `InvestmentBrokers`, `BrokerFees`, `Cashbacks`, `CashInterests`, `CashCurrencies`, `Dividends`, `Funds`, `FundOrders`, `Deposits`, `DepositPayments`, `BNBRates`, `AIStocksInformations`, `AIBNBRates`.
 
 ### 🚗 3. Автомобили & Телематика (8)
 `Cars`, `CarServices`, `CarRepairs`, `CarDrivingStats`, `FuelRecords`, `FuelConsumptionAnalysis`, `LeaseContracts`, `UserSettings`.

@@ -1,12 +1,12 @@
 ---
 name: pm-mongodb-database
 description: >-
-  Пълно ръководство и пълна схема на production MongoDB Atlas базата данни (`PersonalManager`): 51 колекции, полета, BSON типове, Atlas конекции, C# & PyMongo CRUD операции, MongoDB Atlas MCP инструменти и индекси.
+  Пълно ръководство и пълна схема на production MongoDB Atlas базата данни (`PersonalManager`): 56 колекции, полета, BSON типове, Atlas конекции, C# & PyMongo CRUD операции, MongoDB Atlas MCP инструменти и индекси.
 ---
 
 # PersonalManager MongoDB Production Database Guide
 
-Базата данни на **PersonalManager** се гоства в **MongoDB Atlas** (Cluster: `papcl01-wqwkg.azure.mongodb.net`, Database: `PersonalManager`) и съдържа **54 реални колекции**, разпределени в 5 основни функционални домейна.
+Базата данни на **PersonalManager** се гоства в **MongoDB Atlas** (Cluster: `papcl01-wqwkg.azure.mongodb.net`, Database: `PersonalManager`) и съдържа **56 реални колекции**, разпределени в 5 основни функционални домейна.
 
 ---
 
@@ -38,7 +38,11 @@ description: >-
 - **`Reminders`** (381 документа): Напомняния за плащания (`UserId`, `RelationId`, `Comment`, `Sum`, `Type`, `Date`, `Archived`, `ArchivedOn`).
 - **`Calculations`** (1 документ): Съхранени калкулации (`UserId`, `Name`, `Entries`).
 
-### 📈 2. Инвестиции, Брокери, Акции, Фондове, Дивиденти, БНБ и AI Анализи (17 колекции)
+### 📈 2. Инвестиции, Брокери, Акции, Фондове, Дивиденти, БНБ, Rebalancing и AI Анализи (19 колекции)
+- **`RebalancingTargetSettings`**: Персонализирани целеви процентни тегла на инвестиционните позиции за Buy-Only ребалансиране (`UserId`, `Ticker`, `Name`, `TargetPercentage`, `IsActive`, `LastUpdated`).
+  - *Индекси:* `idx_user_ticker` (`UserId: 1, Ticker: 1`).
+- **`AIRebalancingAnalyses`**: Персистирани AI стратегически ребалансиращи анализи и дивидентни прогнози (PADI), генерирани от Google Gemini (`UserId`, `GeneratedAt`, `CashToInvestEUR`, `TotalPortfolioValueEUR`, `CurrentPadiEUR`, `ProjectedPadiEUR`, `BuyRecommendations`, `MonthlySchedule`, `AIAnalysisReview`, `Status`).
+  - *Индекси:* `idx_rebalance_user_date` (`UserId: 1, GeneratedAt: -1`).
 - **`Stocks`** (26 документа): Позиции в акции и ETF-и (`UserId`, `BrokerId`, `BrokerName`, `Ticker`, `Is_ETF`, `Name`, `Country`, `StockExchangeCode`, `Shares`, `AverageSharePrice`, `CurrentSharePrice`, `CurrentSharePriceInEUR`, `SumInCurrency`, `DividendsInCurrency`, `DividendTaxesInCurrency`, `Currency`, `SumInEUR`, `DividendsInEUR`, `DividendTaxesInEUR`, `FeeInCurrency`, `FeeInEUR`, `LastUpdated`).
 - **`InvestStockOrders`** (505 документа): Покупки и продажби на акции (`UserId`, `BrokerId`, `BrokerName`, `Ticker`, `Name`, `Is_ETF`, `StockExchange`, `OrderID`, `SellOrder`, `Shares`, `SharePrice`, `SumInCurrency`, `Currency`, `CurrencyRateToEUR`, `SumInEUR`, `FeeInCurrency`, `FeeInEUR`, `Date`).
 - **`StockPrices`** (103 документа): Исторически цени на акции (`Ticker`, `Exchange`, `Date`, `OpenPrice`, `ClosePrice`, `HighPrice`, `LowPrice`, `Volume`).

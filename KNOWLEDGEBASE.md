@@ -9,7 +9,7 @@
 1. [Общ Преглед на paptools & PersonalManager](#1-общ-преглед-на-paptools--personalmanager)
 2. [Карта на Скиловете (Skills Registry)](#2-карта-на-скиловете-skills-registry)
 3. [Системна Архитектура & Технологичен Стек](#3-системна-архитектура--технологичен-стек)
-4. [База Данни MongoDB Atlas & Схеми (51 Колекции)](#4-база-данни-mongodb-atlas--схеми-51-колекции)
+4. [База Данни MongoDB Atlas & Схеми (56 Колекции)](#4-база-данни-mongodb-atlas--схеми-56-колекции)
 5. [Справочник по Функционални Домейни](#5-справочник-по-функционални-домейни)
    - [💰 5.1 Финанси, Бюджети & Спестявания](#-51-финанси-бюджети--спестявания)
    - [📈 5.2 Инвестиции, Брокери & AI Анализи](#-52-инвестиции-брокери--ai-анализи)
@@ -38,7 +38,7 @@
 | :--- | :--- | :--- |
 | 🧠 **`pm-knowledgebase`** | Главна база знания и индекс на цялата екосистема `PersonalManager` и `paptools`. | [`skills/pm-knowledgebase/SKILL.md`](file:///C:/Users/papun/.gemini/config/plugins/paptools/skills/pm-knowledgebase/SKILL.md) |
 | 🏗️ **`pm-architecture`** | Архитектура на .NET Blazor Server, Web API, SysFunctions и защитена конфигурация. | [`skills/pm-architecture/SKILL.md`](file:///C:/Users/papun/.gemini/config/plugins/paptools/skills/pm-architecture/SKILL.md) |
-| 🗄️ **`pm-mongodb-database`** | Схема на production MongoDB Atlas базата (51 колекции, индекси, BSON типове, MCP). | [`skills/pm-mongodb-database/SKILL.md`](file:///C:/Users/papun/.gemini/config/plugins/paptools/skills/pm-mongodb-database/SKILL.md) |
+| 🗄️ **`pm-mongodb-database`** | Схема на production MongoDB Atlas базата (56 колекции, индекси, BSON типове, MCP). | [`skills/pm-mongodb-database/SKILL.md`](file:///C:/Users/papun/.gemini/config/plugins/paptools/skills/pm-mongodb-database/SKILL.md) |
 | 🎨 **`pm-blazor-ui`** | Стандарти за Blazor UI компоненти, цветова палитра, карти, форми и Code-Behind модел. | [`skills/pm-blazor-ui/SKILL.md`](file:///C:/Users/papun/.gemini/config/plugins/paptools/skills/pm-blazor-ui/SKILL.md) |
 | 💳 **`pm-finance-core`** | Бизнес правила за транзакции, заплати, планирани/периодични разходи и спестявания. | [`skills/pm-finance-core/SKILL.md`](file:///C:/Users/papun/.gemini/config/plugins/paptools/skills/pm-finance-core/SKILL.md) |
 | 📊 **`pm-investments`** | Модели за акции, взаимни фондове, дивиденти, БНБ валутни курсове и брокерски поръчки. | [`skills/pm-investments/SKILL.md`](file:///C:/Users/papun/.gemini/config/plugins/paptools/skills/pm-investments/SKILL.md) |
@@ -85,15 +85,15 @@
 
 ---
 
-## 4. База Данни MongoDB Atlas & Схеми (51 Колекции)
+## 4. База Данни MongoDB Atlas & Схеми (56 Колекции)
 
-Базата данни **PersonalManager** съдържа **51 колекции**, разпределени в 5 основни домейни:
+Базата данни **PersonalManager** съдържа **56 колекции**, разпределени в 5 основни домейни:
 
 ```text
-PersonalManager Database (51 Collections)
-├── 💰 Финанси & Спестявания (16)  : Transactions, Salaries, SumSalaries, Categories, PlannedExpenses...
-├── 📈 Инвестиции & AI (17)       : Stocks, InvestStockOrders, Dividends, StockPrices, AIStocksInformations...
-├── 🚗 Автомобили & Телематика (8) : Cars, CarServices, CarRepairs, CarDrivingStats, FuelRecords...
+PersonalManager Database (56 Collections)
+├── 💰 Финанси & Спестявания (19)  : Transactions, Salaries, SumSalaries, Categories, PlannedExpenses...
+├── 📈 Инвестиции & AI (19)       : Stocks, InvestStockOrders, Dividends, StockPrices, RebalancingTargetSettings, AIRebalancingAnalyses...
+├── 🚗 Автомобили & Телематика (10): Cars, CarDocuments, CarServiceIntervals, CarServices, CarRepairs...
 ├── 🧾 OCR Scan & Бележки (3)      : Receipts, ReceiptMaps, ReceiptExpressions
 └── ⚙️ Системни & Логове (5)       : Users, UserMappings, Settings, JobStatuses, Logs
 ```
@@ -113,8 +113,9 @@ PersonalManager Database (51 Collections)
 - **`Savings` & `SavingTransactions`**: Спестовни сметки и движения по тях.
 - **`RecurringExpenses` & `PlannedExpenses`**: Периодични и планирани разходи.
 
-### 📈 5.2 Инвестиции, Брокери & AI Анализи
+### 📈 5.2 Инвестиции, Брокери, Rebalancing & AI Анализи
 - **`Stocks` & `InvestStockOrders`**: Портфейлни позиции и транзакции при брокери (Trading 212, Interactive Brokers).
+- **`RebalancingTargetSettings` & `AIRebalancingAnalyses`**: Целеви процентни тегла на портфолиото, Buy-Only ребалансиращ оптимизатор (без продажби) и Google Gemini AI анализ на пасивен дивидентен поток (PADI).
 - **`Dividends`, `BrokerFees`, `CashInterests`, `Cashbacks`**: Допълнителни финансови потоци от инвестиции.
 - **`BNBRates` & `AIBNBRates`**: Курсове на БНБ и AI прогнозни анализи.
 - **`AIStocksInformations`**: Автоматично генерирани AI фундаментални и технически доклади за всяка притежавана акция.
