@@ -1,7 +1,7 @@
 ---
 name: pm-knowledgebase
 description: >-
-  Централна база знания (Knowledge Base) и главен индекс за екосистемата PersonalManager и модула paptools: системна архитектура, 56 MongoDB Atlas колекции, домейни (финанси, инвестиции, автомобили, data ingestion, AI анализи), пълна карта на всички 13 скила, MCP инструменти и стандарти за разработка.
+  Централна база знания (Knowledge Base) и главен индекс за екосистемата PersonalManager и модула paptools: системна архитектура, 56 MongoDB Atlas колекции, домейни (финанси, инвестиции, автомобили, data ingestion, AI анализи), пълна карта на всички 14 скила, MCP инструменти и стандарти за разработка.
 ---
 
 # PersonalManager & paptools Knowledge Base (Централен Справочник)
@@ -14,11 +14,12 @@ description: >-
 
 ## 🗺️ Карта на Всички Скилове в paptools
 
-Модулът `paptools` съдържа 13 специализирани скила, обхващащи всяка част от системата:
+Модулът `paptools` съдържа 14 специализирани скила, обхващащи всяка част от системата:
 
 ```text
 paptools Skills Map
 ├── 🧠 pm-knowledgebase              [Централна база знания и главен индекс]
+├── 🧮 pm-megatools                  [Клиентски PWA калкулатори, .NET 10 WASM, Finnhub, Vault, Radzen]
 ├── 🏗️ pm-architecture               [Архитектура: .NET Blazor Server, Web API, SysFunctions, Secrets]
 ├── 🗄️ pm-mongodb-database          [MongoDB Atlas: 56 колекции, 5 домейни, BSON типове, MCP, индекси]
 ├── 🎨 pm-blazor-ui                  [Blazor UI: Code-behind, цветова палитра, Bootstrap компоненти]
@@ -46,6 +47,11 @@ paptools Skills Map
   - Услуга `PersonalManager-Data-Ingestion`.
   - Използва `APScheduler` (`BlockingScheduler`) за 6 фонови планирани задачи.
   - Интеграция с `Google Gemini API` (AI Stock, Currency & Car Analysis) и GCS bucket (телематика).
+- **MegaTools PWA (`.NET 10 Blazor WebAssembly`)**:
+  - Самостоятелен Progressive Web App (PWA) пакет с офлайн кеширане.
+  - Калкулатори: акции (`LongStockInvestment` с Gordon Growth & DRIP), сложна лихва, дивиденти, заплати, кредити, гориво и др.
+  - Finnhub Quote API търсене в реално време + локален каталог от 60+ акции/ETF-и.
+  - `SecureStorageService` криптиран трезор в `localStorage` (AES-CTR поток) за безопасни API ключове.
 - **База Данни (`MongoDB Atlas Cloud`)**:
   - Сървър: `papcl01-wqwkg.azure.mongodb.net`
   - База: `PersonalManager` (56 колекции).
@@ -103,3 +109,4 @@ paptools Skills Map
 - За акции, дивиденти и БНБ ➔ [`pm-investments`](file:///C:/Users/papun/.gemini/config/plugins/paptools/skills/pm-investments/SKILL.md)
 - За автомобили, горива и лизинг ➔ [`pm-car-maintenance`](file:///C:/Users/papun/.gemini/config/plugins/paptools/skills/pm-car-maintenance/SKILL.md) & [`pm-telematics-fuel`](file:///C:/Users/papun/.gemini/config/plugins/paptools/skills/pm-telematics-fuel/SKILL.md)
 - За Python фонови задачи и AI анализи ➔ [`pm-data-ingestion-architecture`](file:///C:/Users/papun/.gemini/config/plugins/paptools/skills/pm-data-ingestion-architecture/SKILL.md) & [`pm-ai-analytics`](file:///C:/Users/papun/.gemini/config/plugins/paptools/skills/pm-ai-analytics/SKILL.md)
+- За клиентски финансови калкулатори, PWA и акции в реално време ➔ [`pm-megatools`](file:///C:/Users/papun/.gemini/config/plugins/paptools/skills/pm-megatools/SKILL.md)

@@ -16,6 +16,7 @@
    - [🚗 5.3 Автомобили, Телематика & Горива](#-53-автомобили-телематика--горива)
    - [🧾 5.4 OCR Scan & Касови Бележки](#-54-ocr-scan--касови-бележки)
    - [⚙️ 5.5 Data Ingestion & Фонова Обработка (Python)](#️-55-data-ingestion--фонова-обработка-python)
+   - [🧮 5.6 MegaTools - PWA Калкулатори & Инвестиционен Сюит](#-56-megatools---pwa-калкулатори--инвестиционен-сюит)
 6. [Интеграция с MongoDB Atlas MCP Server](#6-интеграция-с-mongodb-atlas-mcp-server)
 7. [Стандарти за Разработка & UI (Blazor Server & Python)](#7-стандарти-за-разработка--ui-blazor-server--python)
 8. [Миграции и Поддръжка на Данни](#8-миграции-и-поддръжка-на-данни)
@@ -37,6 +38,7 @@
 | Скил | Описание & Предназначение | Файл |
 | :--- | :--- | :--- |
 | 🧠 **`pm-knowledgebase`** | Главна база знания и индекс на цялата екосистема `PersonalManager` и `paptools`. | [`skills/pm-knowledgebase/SKILL.md`](file:///C:/Users/papun/.gemini/config/plugins/paptools/skills/pm-knowledgebase/SKILL.md) |
+| 🧮 **`pm-megatools`** | Клиентски финансов и инвестиционен пакет MegaTools (.NET 10 Blazor WASM, PWA, Radzen, Finnhub, Vault). | [`skills/pm-megatools/SKILL.md`](file:///C:/Users/papun/.gemini/config/plugins/paptools/skills/pm-megatools/SKILL.md) |
 | 🏗️ **`pm-architecture`** | Архитектура на .NET Blazor Server, Web API, SysFunctions и защитена конфигурация. | [`skills/pm-architecture/SKILL.md`](file:///C:/Users/papun/.gemini/config/plugins/paptools/skills/pm-architecture/SKILL.md) |
 | 🗄️ **`pm-mongodb-database`** | Схема на production MongoDB Atlas базата (56 колекции, индекси, BSON типове, MCP). | [`skills/pm-mongodb-database/SKILL.md`](file:///C:/Users/papun/.gemini/config/plugins/paptools/skills/pm-mongodb-database/SKILL.md) |
 | 🎨 **`pm-blazor-ui`** | Стандарти за Blazor UI компоненти, цветова палитра, карти, форми и Code-Behind модел. | [`skills/pm-blazor-ui/SKILL.md`](file:///C:/Users/papun/.gemini/config/plugins/paptools/skills/pm-blazor-ui/SKILL.md) |
@@ -54,31 +56,32 @@
 
 ## 3. Системна Архитектура & Технологичен Стек
 
-Екосистемата на PersonalManager е изградена от два основни компонента:
+Екосистемата се състои от три взаимнодопълващи се компонента:
 
 ```text
-┌─────────────────────────────────────────────────────────────────┐
-│                    PersonalManager Ecosystem                    │
-└─────────────────────────────────────────────────────────────────┘
-                                │
-        ┌───────────────────────┴───────────────────────┐
-        ▼                                               ▼
-┌───────────────────────────────┐               ┌───────────────────────────────┐
-│     PersonalManager (.NET)    │               │ Data Ingestion Engine (Python)│
-│  Blazor Server UI & Web API   │               │   APScheduler & AI Analytics  │
-└───────────────┬───────────────┘               └───────────────┬───────────────┘
+┌─────────────────────────────────────────────────────────────────────────────────┐
+│                           PersonalManager Ecosystem                             │
+└─────────────────────────────────────────────────────────────────────────────────┘
                 │                                               │
-                └───────────────────────┬───────────────────────┘
-                                        ▼
-                        ┌───────────────────────────────┐
-                        │   MongoDB Atlas (Cloud DB)    │
-                        │    Database: PersonalManager  │
-                        │        (51 Collections)       │
-                        └───────────────────────────────┘
+        ┌───────┴───────────────────────┐                       │
+        ▼                               ▼                       ▼
+┌───────────────────────────────┐ ┌───────────────────────────┐ ┌───────────────────────────────┐
+│     PersonalManager (.NET)    │ │Data Ingestion Engine(Py)  │ │      MegaTools (.NET 10)      │
+│  Blazor Server UI & Web API   │ │APScheduler & AI Analytics │ │ Blazor WASM, PWA, Finnhub     │
+└───────────────┬───────────────┘ └─────────────┬─────────────┘ └───────────────────────────────┘
+                │                               │
+                └───────────────┬───────────────┘
+                                ▼
+                ┌───────────────────────────────┐
+                │   MongoDB Atlas (Cloud DB)    │
+                │    Database: PersonalManager  │
+                │        (56 Collections)       │
+                └───────────────────────────────┘
 ```
 
 ### Основен стек:
 - **Уеб интерфейс & API**: `.NET` / `Blazor Server` (`Web.ManagerV2`), `Web.API`, `SysFunctions`, `DataModels`.
+- **Клиентски PWA Сюит**: `.NET 10` / `Blazor WebAssembly` (`MegaTools`), `Radzen.Blazor`, PWA Service Worker, Finnhub API.
 - **База данни**: `MongoDB Atlas` (`papcl01-wqwkg.azure.mongodb.net`, DB: `PersonalManager`).
 - **Фонова обработка & AI**: `Python 3.11+`, `APScheduler`, `pymongo`, `Google Document AI`, `Google Gemini API`.
 - **MCP Сървър**: `mongodb-mcp-server` с преконфигуриран Atlas Connection String.
@@ -140,6 +143,16 @@ PersonalManager Database (56 Collections)
   - `daily_automation.py`: Ежедневни финансови автоматизации: начисляване на лихви по депозити, падежиране на регулярни разходи (с коректна логика за края на месеца), конвертиране на мултивалутни абонаменти, оптимизирано $O(N)$ обобщение на баланси и анализ на горивната ефективност (`FuelConsumptionAnalysis`).
   - `gcp_processor.py`: Парсър за телематични Excel логове от Google Cloud Storage (GCS bucket), синхронизация на километри (`Cars.CurrentKM`) и записи в `CarDrivingStats`.
 - **`JobStatuses`**: Мониторинг лог за всяко стартиране на фонова задача (`JobName`, `Status`, `DurationSeconds`, `Error`, `ExecutedAt`).
+
+### 🧮 5.6 MegaTools - PWA Калкулатори & Инвестиционен Сюит
+- **Пакет**: `MegaTools` – самостоятелно Blazor WebAssembly Progressive Web App (PWA) решение на .NET 10.
+- **Основни Модули**:
+  - `LongStockInvestment`: Дългосрочно симулиране на акции с Gordon Growth дивидентен модел, реинвестиране (DRIP), месечни DCA вноски, симулация на ценови растеж и интерактивна Radzen Area графика.
+  - `StockSearchPicker`: Търсене в реално време чрез Finnhub Quote API (`FinnhubService`) + вграден локален каталог от 60+ популярни американски акции и ETF-и (MSFT, AAPL, NVDA, SPY, VOO, SCHD и др.).
+  - `DividendCalculator`, `CompoundInterestCalculator`, `DepositCalculator`, `LoanCalculator`, `SalaryCalculator`, `FuelCalculator`, `PercentageCalculator`, `BmiCalorieCalculator`.
+- **Сигурност**: `SecureStorageService` – AES-CTR софтуерен поток с SHA-256 хеш и 16-байтов криптографски IV за съхранение на API ключове (Finnhub, Gemini) в `localStorage`, съвместим на 100% с WebAssembly runtime без CA1416 предупреждения.
+- **PWA & Мобилни Стандарти**: Оптимизиран `service-worker.published.js`, манифест с бързи преки пътища (App Shortcuts) и стандартизирана позиция на легендата на графиките (`LegendPosition.Bottom`), предотвратяваща хоризонтално сбиване на тесни екрани.
+- **Подробно ръководство**: Вижте [`skills/pm-megatools/SKILL.md`](file:///C:/Users/papun/.gemini/config/plugins/paptools/skills/pm-megatools/SKILL.md).
 
 ---
 

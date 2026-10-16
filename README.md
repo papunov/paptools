@@ -4,7 +4,7 @@
 
 ## 📚 База Знания (Knowledge Base)
 
-- **[Централна База Знания (KNOWLEDGEBASE.md)](./KNOWLEDGEBASE.md)** - Пълен пътеводител, системна архитектура, 51 MongoDB Atlas колекции, домейни, стандарти и навигация.
+- **[Централна База Знания (KNOWLEDGEBASE.md)](./KNOWLEDGEBASE.md)** - Пълен пътеводител, системна архитектура, 56 MongoDB Atlas колекции, домейни, стандарти и навигация.
 
 ## 📁 Структура
 
@@ -16,8 +16,9 @@ paptools/
 ├── .gitignore                # Git игнорирани файлове
 ├── mcp_config.json.example   # Примерен темплейт за MongoDB Atlas MCP сървър
 ├── mcp_config.json           # Локална конфигурация с реални секрети (в .gitignore)
-└── skills/                   # Папка със скилове (13 бр.)
+└── skills/                   # Папка със скилове (14 бр.)
     ├── pm-knowledgebase/     # Главна база знания & индекс
+    ├── pm-megatools/         # Клиентски PWA калкулатори, .NET 10 WASM, Finnhub, Vault
     ├── pm-architecture/      # .NET Blazor, Web API & SysFunctions архитектура
     ├── pm-mongodb-database/  # MongoDB Atlas схема (51 колекции) & MCP
     ├── pm-blazor-ui/         # Blazor Server UI стандарти & компоненти
