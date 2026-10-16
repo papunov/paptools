@@ -48,6 +48,8 @@ MegaTools/
 │   │   ├── PercentageCalculator.razor     # Процентни изчисления
 │   │   ├── BmiCalorieCalculator.razor     # BMI индекс и калориен баланс (TDEE)
 │   │   └── StockSearchPicker.razor        # Live търсачка на акции с autocomplete & чипове
+│   ├── Settings/
+│   │   └── CloudSyncCard.razor            # Supabase Cloud Vault UI с E2EE синхронизация
 │   └── Common/
 │       └── PwaInstallButton.razor         # PWA бутон за инсталация с модал за Android/iOS
 ├── Layout/
@@ -78,14 +80,16 @@ MegaTools/
 │   ├── Calculators/Result/                # Изходни резултатни модели
 │   ├── Calculators/Investment/            # StockPresetModel за акции и ETF-и
 │   └── Settings/
-│       └── AppSettingsModel.cs            # Модел за настройки, API ключове и предпочитания
+│       ├── AppSettingsModel.cs            # Модел за настройки, API ключове и предпочитания
+│       └── SupabaseSyncModels.cs          # Схеми за Supabase Auth, Vault Record и Payload
 ├── Pages/
 │   ├── Home.razor                         # Начално табло с бързи карти към калкулаторите
 │   ├── Calculators.razor                  # Каталог на всички калкулатори с филтриране
 │   └── Settings.razor                     # Настройки, криптирани API ключове и управление на кеша
 ├── Services/
 │   ├── SecureStorageService.cs            # Браузърно защитен шифър (SHA-256 CTR keystream)
-│   └── AppSettingsService.cs              # Управление на настройки, ping тестове и миграция
+│   ├── AppSettingsService.cs              # Управление на настройки, ping тестове и миграция
+│   └── SupabaseSyncService.cs            # Zero-Knowledge E2EE клиент за Supabase PostgREST
 └── wwwroot/
     ├── manifest.webmanifest               # PWA манифест с App Shortcuts и метаданни
     ├── service-worker.js                  # PWA Service Worker (Dev среда)
@@ -151,7 +155,40 @@ MegaTools/
 
 ---
 
-## 7. Мобилно Приложение (PWA) & Респонсивни Графики
+## 7. Облачна Синхронизация: Supabase Cloud Vault (Zero-Knowledge E2EE)
+
+MegaTools предлага крос-платформена синхронизация на настройките, API ключовете и предпочитанията между всички ваши устройства (десктоп, лаптоп, Android, iOS) без компрометиране на сигурността.
+
+### Архитектура на Zero-Knowledge E2EE:
+1. **Деривация на ключ**: От въведената от потребителя парола и имейл адрес се генерира 256-битов ключ чрез **PBKDF2 с SHA-256 (50 000 итерации)**:
+   $$\text{Key} = \text{PBKDF2}(\text{Password}, \text{Salt}_{\text{email}}, 50000, 32)$$
+2. **Локално шифроване**: Цялото състояние (`AppSettingsModel`) се сериализира в JSON и се криптира локално в браузъра чрез управляван симетричен Counter-Mode (CTR) keystream с 16-байтов случаен вектор (IV).
+3. **Supabase PostgREST & Auth**:
+   - Автентикацията се извършва директно през Supabase Auth API (`POST /auth/v1/token` или `/auth/v1/signup`) с връщане на JWT Bearer Token.
+   - Криптираният шифър се качва в PostgreSQL таблица `user_settings_vault` чрез `POST /rest/v1/user_settings_vault` (с `Prefer: resolution=merge-duplicates` за автоматичен upsert).
+4. **Row Level Security (RLS)**: В Supabase всеки потребител може да чете и записва единствено собствения си ред (`auth.uid() = user_id`).
+5. **Нулев достъп до сурови данни**: Дори администраторът на базата данни в Supabase вижда само криптирания шифър `encrypted_payload`. Паролата и ключовете никога не напускат браузъра.
+
+### 1-минутна настройка на Supabase:
+В безплатен проект на [supabase.com](https://supabase.com) в SQL Editor се изпълнява:
+```sql
+create table if not exists public.user_settings_vault (
+  user_id uuid references auth.users not null primary key,
+  encrypted_payload text not null,
+  iv text not null,
+  updated_at timestamp with time zone default timezone('utc'::text, now()) not null
+);
+alter table public.user_settings_vault enable row level security;
+create policy "Users can access and modify own vault"
+  on public.user_settings_vault
+  for all
+  using (auth.uid() = user_id)
+  with check (auth.uid() = user_id);
+```
+
+---
+
+## 8. Мобилно Приложение (PWA) & Респонсивни Графики
 
 ### PWA Инсталация:
 - **Android / Windows / macOS**: Докосване на бутона **„Инсталирай като Апп“** задейства нативното събитие `beforeinstallprompt` и инсталира приложението директно на работния плот или начален екран.
@@ -177,7 +214,7 @@ MegaTools/
 
 ---
 
-## 8. Разработка и Деплой (Azure Static Web Apps)
+## 9. Разработка и Деплой (Azure Static Web Apps)
 
 ### Локално стартиране:
 За да тествате както от компютъра, така и от телефон в същата WiFi мрежа:
