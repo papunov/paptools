@@ -150,8 +150,10 @@ PersonalManager Database (56 Collections)
   - `LongStockInvestment`: Дългосрочно симулиране на акции с Gordon Growth дивидентен модел, реинвестиране (DRIP), месечни DCA вноски, симулация на ценови растеж и интерактивна Radzen Area графика.
   - `StockSearchPicker`: Търсене в реално време чрез Finnhub Quote API (`FinnhubService`) + вграден локален каталог от 60+ популярни американски акции и ETF-и (MSFT, AAPL, NVDA, SPY, VOO, SCHD и др.).
   - `DividendCalculator`, `CompoundInterestCalculator`, `DepositCalculator`, `LoanCalculator`, `SalaryCalculator`, `FuelCalculator`, `PercentageCalculator`, `BmiCalorieCalculator`.
-- **Сигурност**: `SecureStorageService` – AES-CTR софтуерен поток с SHA-256 хеш и 16-байтов криптографски IV за съхранение на API ключове (Finnhub, Gemini) в `localStorage`, съвместим на 100% с WebAssembly runtime без CA1416 предупреждения.
+- **Сигурност & Клиентски Сейф**: `SecureStorageService` – AES-CTR софтуерен поток с SHA-256 хеш и 16-байтов криптографски IV за съхранение на API ключове (Finnhub, Gemini) в `localStorage`, съвместим на 100% с WebAssembly runtime без CA1416 предупреждения.
+- **Облачна Синхронизация (Supabase Cloud Vault)**: Zero-Knowledge E2EE синхронизация между устройства през Supabase PostgREST и Auth (PBKDF2 SHA-256 с 50 000 итерации), автоматичен фонов пул при стартиране на приложението (`TryAutoPullOnStartupAsync` в `MainLayout`), запомняне на ключа на доверени устройства и автоматичен push при запис.
 - **PWA & Мобилни Стандарти**: Оптимизиран `service-worker.published.js`, манифест с бързи преки пътища (App Shortcuts) и стандартизирана позиция на легендата на графиките (`LegendPosition.Bottom`), предотвратяваща хоризонтално сбиване на тесни екрани.
+- **CI/CD & Git Архитектура**: Опростен работен процес с единствен клон `main` – всеки пуш автоматично публикува към Azure Static Web Apps чрез GitHub Actions.
 - **Подробно ръководство**: Вижте [`skills/pm-megatools/SKILL.md`](file:///C:/Users/papun/.gemini/config/plugins/paptools/skills/pm-megatools/SKILL.md).
 
 ---

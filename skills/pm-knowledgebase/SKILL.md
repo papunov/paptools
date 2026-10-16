@@ -52,6 +52,7 @@ paptools Skills Map
   - Калкулатори: акции (`LongStockInvestment` с Gordon Growth & DRIP), сложна лихва, дивиденти, заплати, кредити, гориво и др.
   - Finnhub Quote API търсене в реално време + локален каталог от 60+ акции/ETF-и.
   - `SecureStorageService` криптиран трезор в `localStorage` (AES-CTR поток) за безопасни API ключове.
+  - `SupabaseSyncService`: Zero-Knowledge E2EE крос-платформена синхронизация с фонов авто-пул при стартиране на апп-а.
 - **База Данни (`MongoDB Atlas Cloud`)**:
   - Сървър: `papcl01-wqwkg.azure.mongodb.net`
   - База: `PersonalManager` (56 колекции).
