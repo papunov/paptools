@@ -139,7 +139,7 @@ MegaTools/
 ### 4.6 Инструменти за Сигурност & DevOps (`SslCertificateGenerator`, `SshKeyGenerator`)
 
 #### 4.6.1 SSL / TLS Сертификат Генератор (`SslCertificateGenerator.razor`)
-- **100% Client-Side WebAssembly**: Използва .NET 10 BCL криптография (`CertificateRequest`, `SubjectAlternativeNameBuilder`, `X509Certificate2`) без никакви външни сървъри.
+- **100% Client-Side Web Crypto & Forge**: Тъй като стандартният .NET `X509Pal` хвърля `PlatformNotSupportedException` в Mono WebAssembly, генераторът използва хардуерно-ускорения `window.crypto.subtle` API и вградената офлайн библиотека `forge.min.js` (`security-crypto-helper.js`).
 - **Поддържани алгоритми**: RSA (2048, 3072, 4096-bit) и ECDSA (NIST P-256, P-384, P-521) със сигнатури SHA-256, SHA-384 и SHA-512.
 - **SAN (Subject Alternative Names)**: Множество DNS имена и IP адреси (вкл. `localhost`, `127.0.0.1`, `*.local`).
 - **Гъвкав Експорт**:
@@ -152,10 +152,11 @@ MegaTools/
 - **Управление на записите**: Разделът *"Запазени в Трезора"* позволява преглед, повторно сваляне на `.crt`/`.key` и перманентно изтриване от синхронизирания стейт.
 
 #### 4.6.2 SSH Key Pair Генератор (`SshKeyGenerator.razor`)
-- **OpenSSH Wire Encoding (RFC 4253 & RFC 5656)**: Чисто C# двоично кодиране на публичния ключ (`ssh-rsa` и `ecdsa-sha2-nistp...`) за директно поставяне в `~/.ssh/authorized_keys`, GitHub и GitLab.
+- **Хардуерно-ускорен Web Crypto**: Генерира RSA и ECDSA ключове директно през браузърния `window.crypto.subtle` (5–20 ms скорост) с нулева зависимост от външни сървъри.
+- **OpenSSH Wire Encoding (RFC 4253 & RFC 5656)**: Двоично кодиране на публичния ключ (`ssh-rsa` и `ecdsa-sha2-nistp256/384/521`) за директно поставяне в `~/.ssh/authorized_keys`, GitHub и GitLab.
 - **Отпечатъци (Fingerprints)**: Модерен SHA-256 (`SHA256:...`) и класически MD5 (`MD5:xx:xx:...`).
 - **OpenSSH Drunken Bishop ASCII Randomart**: Решетка 9x17 с автентичен OpenSSH Drunken Bishop алгоритъм на базата на SHA-256 хеша.
-- **Криптиран Частен Ключ (Passphrase Protection)**: По избор ключът се шифрира по PKCS#8 стандарт с AES-256-CBC и PBKDF2 (100 000 итерации).
+- **Криптиран Частен Ключ (Passphrase Protection)**: По избор ключът се шифрира по PKCS#8 / OpenSSH стандарт с AES-256-CBC и PBKDF2 (100 000 итерации).
 - **Терминални помощници**: Автоматични команди за права (`chmod 700 ~/.ssh && chmod 600 id_rsa`), `ssh-copy-id` и конфигурация за `~/.ssh/config`.
 - **Селективен Трезор**: Бутон *"Запази в Личния Трезор"* със синхронизация през E2EE Supabase сейфа на всички свързани устройства.
 
