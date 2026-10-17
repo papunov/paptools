@@ -47,6 +47,8 @@ MegaTools/
 │   │   ├── FuelCalculator.razor           # Разход на гориво и споделено пътуване
 │   │   ├── PercentageCalculator.razor     # Процентни изчисления
 │   │   ├── BmiCalorieCalculator.razor     # BMI индекс и калориен баланс (TDEE)
+│   │   ├── SslCertificateGenerator.razor  # SSL / TLS (X.509 v3, CSR, PFX) с личен трезор
+│   │   ├── SshKeyGenerator.razor          # SSH Key Pair (RSA/ECDSA, OpenSSH wire, Randomart)
 │   │   └── StockSearchPicker.razor        # Live търсачка на акции с autocomplete & чипове
 │   ├── Settings/
 │   │   └── CloudSyncCard.razor            # Supabase Cloud Vault UI с E2EE синхронизация
@@ -57,7 +59,7 @@ MegaTools/
 │   ├── MainLayout.razor.css               # Стилизиране на работната площ
 │   ├── NavMenu.razor                      # Странично навигационно меню с акордеони
 │   └── NavMenu.razor.css                  # Sticky навигация и фиксиран долен панел
-├── MegaFuncs/                             # Чиста математическа и финансова логика
+├── MegaFuncs/                             # Чиста математическа, финансова и криптографска логика
 │   └── Calculators/
 │       ├── Investment/
 │       │   ├── LongStockCalculatorFunc.cs # DCA симулатор с DRIP и динамичен ръст
@@ -69,6 +71,9 @@ MegaTools/
 │       │   ├── CompoundInterestCalculatorFunc.cs
 │       │   ├── LoanCalculatorFunc.cs      # Анюитетни вноски и разбивка лихва/главница
 │       │   └── SalaryCalculatorFunc.cs    # ДОО, ДЗПО, ЗО, ДОД данъчни ставки
+│       ├── Security/
+│       │   ├── SslCertificateGeneratorFunc.cs # X.509 v3, SAN, CSR, PFX, Nginx/Apache шаблони
+│       │   └── SshKeyGeneratorFunc.cs     # OpenSSH wire encoding, SHA256/MD5, Drunken Bishop
 │       ├── Auto/
 │       │   └── FuelCalculatorFunc.cs
 │       ├── Health/
@@ -79,6 +84,8 @@ MegaTools/
 │   ├── Calculators/Input/                 # Входни модели с DataAnnotations валидация
 │   ├── Calculators/Result/                # Изходни резултатни модели
 │   ├── Calculators/Investment/            # StockPresetModel за акции и ETF-и
+│   ├── Security/
+│   │   └── SavedSecurityItemModels.cs     # SavedCertificateItem и SavedSshKeyItem за трезора
 │   └── Settings/
 │       ├── AppSettingsModel.cs            # Модел за настройки, API ключове и предпочитания
 │       └── SupabaseSyncModels.cs          # Схеми за Supabase Auth, Vault Record и Payload
@@ -128,6 +135,29 @@ MegaTools/
 ### 4.5 Заплати в България (`SalaryCalculator`)
 - Преизчисляване от брутно към нетно възнаграждение и обратно.
 - Пълна законова разбивка на осигуровките за сметка на служителя и за сметка на работодателя (ДОО, ДЗПО, ЗО, ДОД).
+
+### 4.6 Инструменти за Сигурност & DevOps (`SslCertificateGenerator`, `SshKeyGenerator`)
+
+#### 4.6.1 SSL / TLS Сертификат Генератор (`SslCertificateGenerator.razor`)
+- **100% Client-Side WebAssembly**: Използва .NET 10 BCL криптография (`CertificateRequest`, `SubjectAlternativeNameBuilder`, `X509Certificate2`) без никакви външни сървъри.
+- **Поддържани алгоритми**: RSA (2048, 3072, 4096-bit) и ECDSA (NIST P-256, P-384, P-521) със сигнатури SHA-256, SHA-384 и SHA-512.
+- **SAN (Subject Alternative Names)**: Множество DNS имена и IP адреси (вкл. `localhost`, `127.0.0.1`, `*.local`).
+- **Гъвкав Експорт**:
+  - Публичен X.509 v3 сертификат (`.crt` / `.pem`)
+  - Частен ключ (`.key` в PKCS#8 или OpenSSH формат)
+  - CSR заявка за подписване (`.csr`)
+  - PKCS#12 двоичен архив (`.pfx`) с паролна защита за IIS, Azure и Windows
+  - Готови конфигурационни снипети за Nginx и Apache VirtualHost.
+- **Селективен Личен Трезор (Selective Vault Persistence)**: Сертификатите не се записват автоматично, а само при изричен клик върху *"Запази в Личния Трезор"*. Потребителят избира етикет и дали да съхрани и частния ключ (или само публичния сертификат).
+- **Управление на записите**: Разделът *"Запазени в Трезора"* позволява преглед, повторно сваляне на `.crt`/`.key` и перманентно изтриване от синхронизирания стейт.
+
+#### 4.6.2 SSH Key Pair Генератор (`SshKeyGenerator.razor`)
+- **OpenSSH Wire Encoding (RFC 4253 & RFC 5656)**: Чисто C# двоично кодиране на публичния ключ (`ssh-rsa` и `ecdsa-sha2-nistp...`) за директно поставяне в `~/.ssh/authorized_keys`, GitHub и GitLab.
+- **Отпечатъци (Fingerprints)**: Модерен SHA-256 (`SHA256:...`) и класически MD5 (`MD5:xx:xx:...`).
+- **OpenSSH Drunken Bishop ASCII Randomart**: Решетка 9x17 с автентичен OpenSSH Drunken Bishop алгоритъм на базата на SHA-256 хеша.
+- **Криптиран Частен Ключ (Passphrase Protection)**: По избор ключът се шифрира по PKCS#8 стандарт с AES-256-CBC и PBKDF2 (100 000 итерации).
+- **Терминални помощници**: Автоматични команди за права (`chmod 700 ~/.ssh && chmod 600 id_rsa`), `ssh-copy-id` и конфигурация за `~/.ssh/config`.
+- **Селективен Трезор**: Бутон *"Запази в Личния Трезор"* със синхронизация през E2EE Supabase сейфа на всички свързани устройства.
 
 ---
 
