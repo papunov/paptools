@@ -344,5 +344,24 @@ private readonly Dictionary<string, string> _mapUrl = new Dictionary<string, str
    - Градиентен акцентен бутон: `background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%)`.
    - Автоматичен овъррайд за `html.theme-light` (бяла карта с тъмен текст `#0f172a`).
 
+---
+
+## 14. Фронтенд Библиотеки, Икони и PWA Ресурси (Frontend Assets & Libraries)
+
+1. **FontAwesome 6.7.2 Free**:
+   - Намира се локално в `wwwroot/fonts/` (`fontawesome-all.min.css`, WOFF2 и TTF шрифтове).
+   - Заменя остарялата версия 5.12.0 и премахва остарелите `.eot` и `.svg` формати.
+   - Поддържа пълна съвместимост с префиксите `fas`, `far`, `fab`, както и `fa-v4compatibility`.
+2. **html5-qrcode v2.3.8**:
+   - Локализирана в `wwwroot/js/html5-qrcode.min.js`.
+   - Регистрирана локално в `_Host.cshtml` и включена в `STATIC_ASSETS` на `service-worker.js` (`pm-pwa-cache-v2`).
+   - Премахва зависимостта от външния CDN `unpkg.com` и осигурява надеждно офлайн PWA сканиране на бонове.
+3. **Open Iconic**:
+   - Напълно премахната от проекта (остаряла библиотека от .NET 3.1). Заменена изцяло от FontAwesome.
+4. **Bootstrap 5.3.8**:
+   - Използва се само CSS частта (`wwwroot/css/bootstrap/bootstrap.min.css`) за решетка (grid) и утилити класове (`d-flex`, `row`, `col`, `gap-*`, `mb-*`).
+   - Bootstrap JS (`bootstrap.bundle.min.js`) не се зарежда, за да не компрометира виртуалния DOM на Blazor Server.
+
+
 
 
