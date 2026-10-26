@@ -202,6 +202,7 @@ PersonalManager Database (56 Collections)
      - *Компактен хедър*: Скриване на потребителския имейл под 576px с `display: none !important;` в `LoginDisplay`.
      - *Viewport Meta Tag*: `viewport-fit=cover` и `maximum-scale=1.0, user-scalable=no` в `_Host.cshtml`.
    - **Регистрация в Breadcrumbs (`_mapUrl`)**: Всеки нов маршрут (`@page`) **задължително** трябва да има регистриран съответен URL сегмент в речника `_mapUrl` в [`MainLayout.razor`](file:///c:/Users/papun/RiderProjects/PersonalManager/PersonalManager/Web.ManagerV2/Shared/MainLayout.razor) с българско име (напр. `{"documents", "Документи"}`), за да не се показва суровият английски URL път в навигационните хлябни трохи.
+   - **Reconnection UI при Заспиване на Сайта**: Задължително дефиниране на потребителски `<div id="components-reconnect-modal">` в `_Host.cshtml` с тъмен бекдроп (`backdrop-filter: blur(10px)`), контрастна тъмна карта (`#182234`), ясни икони и бутони за презареждане при прекратена сесия (`location.reload()`) или повторен опит (`window.Blazor.reconnect()`). Това предотвратява появата на белия служебен Blazor правоъгълник с бял текст при събуждане от заспиване в тъмна тема.
 2. **Python (`PersonalManager-Data-Ingestion`)**:
    - `BlockingScheduler` за периодични задачи с graceful shutdown (`SIGTERM`/`SIGINT`).
    - Сингълтон `MongoClient` за ефикасно управление на връзките към MongoDB Atlas.

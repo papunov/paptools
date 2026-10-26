@@ -319,5 +319,30 @@ private readonly Dictionary<string, string> _mapUrl = new Dictionary<string, str
    - Основните колони се събират в `<= 350px`, за да са видими на телефони (360px–384px) веднага.
    - Плаващите бутони (FAB) имат `border-radius: 50% !important;` и отстояния със `safe-area-inset`.
    - Хедърът крие дълги потребителски имейли под 576px с `display: none !important;`.
+8. ✅ **Reconnection Modal при заспиване**: Дефиниран потребителски `<div id="components-reconnect-modal">` в `_Host.cshtml` с поддръжка на всички състояния (`show`, `retrying`, `failed`, `rejected`) и тъмна тема.
+
+---
+
+## 13. Прекъсната Връзка и Заспиване на Сайта (Reconnection UI & Sleep Mode)
+
+Когато устройството (телефон, таблет или лаптоп) заспи или мрежата прекъсне, SignalR веригата (Circuit) на Blazor Server се разпада. В този момент Blazor активира `#components-reconnect-modal`.
+
+### ⚠️ Проблемът с динамичния fallback:
+Ако елементът `#components-reconnect-modal` липсва в HTML кода на `_Host.cshtml`, Blazor динамично създава fallback елемент със служебен бял фон. При стилизиране на текста в бяло за тъмна тема се получава **бял текст върху бял фон**, който е напълно нечетим.
+
+### 🛡️ Архитектурен стандарт в PersonalManager:
+1. **Експлицитен HTML в `_Host.cshtml`**:
+   Елементът `<div id="components-reconnect-modal" class="components-reconnect-hide">` се поставя задължително в `<body>` преди `<script src="_framework/blazor.server.js">`.
+2. **Четири състояния на връзката**:
+   - `components-reconnect-show`: Първоначален опит за бързо свързване (със спинър).
+   - `components-reconnect-retrying`: Повторен опит с по-дълъг backoff (със спинър).
+   - `components-reconnect-failed`: Неуспешно свързване при липса на мрежа (с бутон „Опитай отново“, извикващ `window.Blazor.reconnect()`).
+   - `components-reconnect-rejected`: Прекратена сесия при продължително заспиване или рестарт на сървъра (с бутон „Презареди страницата“, извикващ `location.reload()`).
+3. **Визуален стил**:
+   - Тъмен замъглен бекдроп: `background: rgba(11, 15, 25, 0.75) !important; backdrop-filter: blur(10px) !important;`.
+   - Тъмна карта: `background-color: #182234 !important; border: 1px solid rgba(255, 255, 255, 0.1) !important; border-radius: 20px;`.
+   - Градиентен акцентен бутон: `background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%)`.
+   - Автоматичен овъррайд за `html.theme-light` (бяла карта с тъмен текст `#0f172a`).
+
 
 
