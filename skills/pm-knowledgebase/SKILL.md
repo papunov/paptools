@@ -46,7 +46,7 @@ paptools Skills Map
 - **Data Ingestion Engine (`Python 3.11+`)**:
   - Услуга `PersonalManager-Data-Ingestion`.
   - Използва `APScheduler` (`BlockingScheduler`) за 6 фонови планирани задачи.
-  - Интеграция с `Google Gemini API` (AI Stock, Currency & Car Analysis) и GCS bucket (телематика).
+  - Интеграция с `Google Gemini API` (AI Stock с Google Search Grounding в реално време, Currency & Car Analysis) и GCS bucket (телематика).
 - **MegaTools PWA (`.NET 10 Blazor WebAssembly`)**:
   - Самостоятелен Progressive Web App (PWA) пакет с офлайн кеширане.
   - Калкулатори: акции (`LongStockInvestment` с Gordon Growth & DRIP), сложна лихва, дивиденти, заплати, кредити, гориво и др.

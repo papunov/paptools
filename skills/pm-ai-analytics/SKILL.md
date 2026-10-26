@@ -19,7 +19,7 @@ description: >-
 - `Ticker`: string (напр. `"AAPL"`, `"VWCE"`)
 - `StockExchangeCode`: string (напр. `"NASDAQ"`, `"XETRA"`)
 - `UserId`: ObjectId
-- `AIInformation`: string (Подробен анализ от LLM съдържащ P/E съотношения, фундаментално здраве, технически нива на подкрепа/съпротива и изводи)
+- `AIInformation`: string (Подробен структуриран профил от Gemini с Google Search Grounding в реално време, съдържащ описание, актуална борсова цена, дивидентна доходност, гласуван дивидент за текущата година, история на изплащанията и актуални тенденции/ръст)
 - `LastUpdated`: DateTime
 
 ### 💱 2. AI Прогнози за Валутни Курсове (`AIBNBRates`)

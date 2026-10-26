@@ -59,7 +59,9 @@ description: >-
 - **Целева колекция**: `AIStocksInformations`
 - **Ключова логика**:
   - Извлича уникалния списък от акции/ETF-и от колекция `Stocks`.
-  - Комбинира фундаменталните данни от `StockFundaments` с промпта `prompts/stock_ai_prompt.txt`.
+  - **RAG Инжектиране на локални данни**: Прочита `CurrentSharePrice` от `Stocks` и коефициенти от `StockFundaments` (`PE`, `Dividend_Yield_Percentage`, `Payout_Ratio_Percentage`) и ги подава в промпта като `$known_data`.
+  - **Google Search Grounding в реално време (`ENABLE_AI_SEARCH_GROUNDING`)**: Чрез `google.genai.types.Tool(google_search=types.GoogleSearch())` моделът прави търсене в интернет за последни котировки, актуални финансови отчети, протоколи от ОСА и гласувани дивиденти към системната дата (`$current_date`). Това елиминира проблема със замръзналия LLM training cutoff.
+  - **Отказоустойчивост (Fallback)**: При временна грешка с Google Search инструментът автоматично прави резервен опит за стандартна LLM генерация без Search, записвайки предупреждение в лога.
   - **Runtime In-Memory Caching**: Ако един и същ тикер (напр. `AAPL` или `VWCE`) се притежава в различни акаунти или брокери, анализът се генерира точно веднъж за целия цикъл и се преизползва. Това предотвратява двойно таксуване на Gemini квоти.
   - Използва специализиран модел `AI_STOCK_MODEL` (напр. `gemini-2.5-flash` или `gemini-3-flash-preview`).
   - Записва анализите в `AIStocksInformations` с UTC клеймо за време.

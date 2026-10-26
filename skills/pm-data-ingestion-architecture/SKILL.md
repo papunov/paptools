@@ -86,6 +86,7 @@ PersonalManager-Data-Ingestion/
 | `GEMINI_API_KEY` | API ключ за Google Gemini | `AIzaSy...` |
 | `AI_MODEL` | Модел за анализи на коли и валути | `gemini-2.5-flash` |
 | `AI_STOCK_MODEL` | Модел за подробни досиета на акции | `gemini-2.5-flash` / `gemini-3-flash-preview` |
+| `ENABLE_AI_SEARCH_GROUNDING` | Включва Google Search Grounding за търсене на живи борсови данни и дивиденти | `True` |
 | `RATE_LIMIT_DELAY` | Пауза между AI / Scraping заявки (сек.) | `3` |
 | `EXCHANGE_RATE_DAYS` | Дни за анализ на валутни трендове | `30` |
 

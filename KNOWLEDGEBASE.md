@@ -139,7 +139,7 @@ PersonalManager Database (56 Collections)
   - `export_bnb.py`: Ежедневен експорт на валутни курсове от БНБ с автоматичен weekend/holiday fallback към последния работен ден.
   - `market_exporter.py`: Скрейпър за фундаментални показатели на акции и ETF-и от StockAnalysis.com (`StockFundaments`), защитен с Rate Limiter, Chrome User-Agent и филтрация на ETF.
   - `ai_data.py`: AI анализи с Google Gemini – изчисляване на темпо и прогнозен пробег спрямо `AnnualTarget` за автомобили (`UserSettings.Cars`) и 30-дневен трендов анализ на основни валути (`AIBNBRates`).
-  - `stock_ai_data.py`: Автоматизирано генериране на подробни AI инвестиционни досиета (`AIStocksInformations`) с runtime кеширане срещу дублирани заявки.
+  - `stock_ai_data.py`: Автоматизирано генериране на подробни AI инвестиционни досиета (`AIStocksInformations`) с включен Google Search Grounding за актуални борсови котировки, последни финансови отчети и гласувани дивиденти в реално време, RAG инжектиране на локални портфейлни данни и runtime кеширане.
   - `daily_automation.py`: Ежедневни финансови автоматизации: начисляване на лихви по депозити, падежиране на регулярни разходи (с коректна логика за края на месеца), конвертиране на мултивалутни абонаменти, оптимизирано $O(N)$ обобщение на баланси и анализ на горивната ефективност (`FuelConsumptionAnalysis`).
   - `gcp_processor.py`: Парсър за телематични Excel логове от Google Cloud Storage (GCS bucket), синхронизация на километри (`Cars.CurrentKM`) и записи в `CarDrivingStats`.
 - **`JobStatuses`**: Мониторинг лог за всяко стартиране на фонова задача (`JobName`, `Status`, `DurationSeconds`, `Error`, `ExecutedAt`).
