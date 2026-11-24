@@ -89,7 +89,7 @@ description: >-
 ### ⚙️ 5. Системни, Логове, Фонови Задачи и Потребители (5 колекции)
 - **`Users`** (2 документа): Потребителски акаунти (`Email`, `Password`, `FirstName`, `LastName`, `BadPasswordAttempts`, `Locked`, `RegisteredOn`, `LastLogon`).
 - **`UserMappings`** (2 документа): Идентификационни мапинги (`email`).
-- **`Settings`** (12 документа): Системни настройки (`UserId`, `Name`, `Value`).
+- **`Settings`** (12 документа): Системни настройки (`UserId`, `Name`, `Value`) — вкл. `Gemini_API_KEY`, `Gemini_Primary_Model` (default `gemini-2.5-flash`), `Gemini_Fallback_Model` (default `gemini-2.0-flash`), Telegram настройки и др.
 - **`JobStatuses`** (551 документа): Логове за изпълнение на фонови задачи от `Data-Ingestion` (`JobName`, `Status`, `DurationSeconds`, `Error`, `ExecutedAt`).
 - **`Logs`** (127 документа): Системни логове за грешки и събития (`Type`, `Name`, `Value`, `Date`).
 
