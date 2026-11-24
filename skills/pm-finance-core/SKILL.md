@@ -77,7 +77,7 @@ public class Transaction
 7. **`InflationSimulator.razor`**:
    - Симулатор на инфлация и покупателна способност (`/inflation`): официални исторически данни от НСИ (HICP) и Евростат (2000 - 2026), изчисление на лична инфлация от реалните транзакции и заплати, интерактивна графика на ерозията на кеша спрямо банков депозит и инвестиционен портфейл, машина на времето за цени и проекция на потребителска кошница.
 8. **`BankImports.razor` & `.cs`**:
-   - Универсален AI импорт на банкови извлечения (`/bank-imports`, `IBankImportService`, `BankStatementAiParser`): поддържа произволно качване на PDF, CSV, XLSX, XLS и TXT от всяка банка чрез Gemini API, без връзка към `Salaries`. Осигурява 4-степенна защита срещу дубликати (`FileHash`, `BankReference`, детерминистичен `DedupHash` с дневен индекс и уникален MongoDB индекс), математическа проверка на салдата, автоматично разпознаване на вътрешни преводи и Rollback на импорт с `DialogService.Confirm`.
+   - Универсален AI импорт на банкови извлечения (`/bank-imports`, `IBankImportService`, `BankStatementAiParser`, `GetBankTransactionsTool`): поддържа произволно качване (вкл. масов импорт на много файлове) на PDF, CSV, XLSX, XLS и TXT от всяка банка чрез централните Gemini модели от `Settings`. Осигурява 4-степенна защита срещу дубликати (`FileHash`, `BankReference`, детерминистичен `DedupHash` с дневен индекс и уникален MongoDB индекс), математическа проверка на салдата, AI сверка (`Reconciliation`) към `Transactions` (1:1 свързване, създаване или игнориране), inline редакция на категории и сметки, Radzen графики + Gap Detector по месеци, управление на `BankMerchantRules` с ретроактивно прилагане, Rollback на импорт и достъп през AI Асистента / Telegram бота (`GetBankTransactionsTool`).
 
 ---
 
