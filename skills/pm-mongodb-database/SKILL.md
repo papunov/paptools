@@ -37,6 +37,14 @@ description: >-
 - **`Notes`** (1 документ): Потребителски бележки (`UserId`, `Text`, `UpdatedOn`).
 - **`Reminders`** (381 документа): Напомняния за плащания (`UserId`, `RelationId`, `Comment`, `Sum`, `Type`, `Date`, `Archived`, `ArchivedOn`).
 - **`Calculations`** (1 документ): Съхранени калкулации (`UserId`, `Name`, `Entries`).
+- **`BankAccounts`**: Регистър на банкови сметки и карти (`UserId`, `BankName`, `BIC`, `IBAN`, `AccountName`, `AccountType`, `Currency`, `CardLast4`, `LastKnownBalance`, `LastBalanceDate`, `IsActive`, `CreatedAt`, `LastUpdated`).
+  - *Индекси:* `idx_bank_acc_user_iban` (`UserId: 1, IBAN: 1`, уникален).
+- **`BankStatementImports`**: Одит и метаданни на качените банкови извлечения (`UserId`, `BankAccountId`, `BankName`, `IBAN`, `Currency`, `FileName`, `FileType`, `FileHash`, `PeriodFrom`, `PeriodTo`, `OpeningBalance`, `ClosingBalance`, `TotalDebit`, `TotalCredit`, `BalanceCheckPassed`, `ExpectedRowCount`, `ParsedRowCount`, `ImportedRowCount`, `SkippedDuplicateCount`, `Status`, `AiModel`, `ImportedAt`).
+  - *Индекси:* `idx_bank_imp_user_hash` (`UserId: 1, FileHash: 1`, уникален), `idx_bank_imp_user_date` (`UserId: 1, ImportedAt: -1`).
+- **`BankTransactions`**: Самостоятелни унифицирани банкови транзакции от всички банки (без връзка към `SalaryId`) (`UserId`, `BankAccountId`, `ImportId`, `BankName`, `IBAN`, `BookingDate`, `ValueDate`, `TransactionDateTime`, `Direction`, `Amount`, `Currency`, `AmountInEUR`, `AmountInBGN`, `OperationType`, `RawOperationLabel`, `IsInternalTransfer`, `CounterpartyName`, `CounterpartyIBAN`, `NormalizedMerchant`, `CardLast4`, `PaymentTokenLast4`, `Description`, `RawText`, `BankReference`, `DedupHash`, `CategoryId`, `CategoryName`, `AiConfidence`, `Status`, `CreatedAt`).
+  - *Индекси:* `idx_bank_tx_user_dedup` (`UserId: 1, DedupHash: 1`, уникален), `idx_bank_tx_user_acc_date` (`UserId: 1, BankAccountId: 1, BookingDate: -1`), `idx_bank_tx_user_date` (`UserId: 1, BookingDate: -1`), `idx_bank_tx_user_import` (`UserId: 1, ImportId: 1`).
+- **`BankMerchantRules`**: Потребителски правила за автоматично категоризиране и нормализиране на банкови търговци (`UserId`, `MatchField`, `MatchType`, `Pattern`, `NormalizedMerchant`, `CategoryId`, `CategoryName`, `MarkAsInternalTransfer`, `IgnoreByDefault`, `Priority`, `UsageCount`, `LastUsedAt`, `CreatedAt`).
+  - *Индекси:* `idx_bank_rules_user_prio` (`UserId: 1, Priority: 1`).
 
 ### 📈 2. Инвестиции, Брокери, Акции, Фондове, Дивиденти, БНБ, Rebalancing и AI Анализи (19 колекции)
 - **`RebalancingTargetSettings`**: Персонализирани целеви процентни тегла на инвестиционните позиции за Buy-Only ребалансиране (`UserId`, `Ticker`, `Name`, `TargetPercentage`, `IsActive`, `LastUpdated`).
